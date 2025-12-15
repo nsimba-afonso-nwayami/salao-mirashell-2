@@ -105,7 +105,7 @@ export default function DashboardAdmin() {
             </Link>
 
             <Link 
-              to="/produtos" 
+              to="/dashboard/admin/produtos" 
               className="block p-3 rounded-lg hover:bg-stone-800/40 cursor-pointer"
             >
               <i className="fas fa-box-open mr-3 w-5 text-amber-400"></i>
@@ -113,7 +113,7 @@ export default function DashboardAdmin() {
             </Link>
 
             <Link 
-              to="/encomendas" 
+              to="/dashboard/admin/encomendas" 
               className="block p-3 rounded-lg hover:bg-stone-800/40 cursor-pointer"
             >
               <i className="fas fa-shipping-fast mr-3 w-5 text-amber-400"></i>
@@ -121,7 +121,7 @@ export default function DashboardAdmin() {
             </Link>
 
             <Link 
-              to="/equipe" 
+              to="/dashboard/admin/equipe" 
               className="block p-3 rounded-lg hover:bg-stone-800/40 cursor-pointer"
             >
               <i className="fas fa-users-cog mr-3 w-5 text-amber-400"></i>
