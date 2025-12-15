@@ -6,6 +6,7 @@ import NotFound from "../pages/site/NotFound";
 
 //Admin
 import DashboardAdmin from "../pages/admin/DashboardAdmin";
+import AgendamentosdAdmin from "../pages/admin/AgendamentosAdmin";
 
 
 export default function AppRoutes () {
@@ -18,6 +19,7 @@ export default function AppRoutes () {
             {/*Rotas do super admin */}
             <Route path="/dashboard/admin/">
                 <Route path="" element={<DashboardAdmin />} />
+                <Route path="agendamentos" element={<AgendamentosdAdmin />} />
             </Route>
         </Routes>
     )
