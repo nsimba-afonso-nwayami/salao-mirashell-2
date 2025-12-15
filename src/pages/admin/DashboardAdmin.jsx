@@ -89,7 +89,7 @@ export default function DashboardAdmin() {
             </Link>
 
             <Link 
-              to="/servicos" 
+              to="/dashboard/admin/servicos" 
               className="block p-3 rounded-lg hover:bg-stone-800/40 cursor-pointer"
             >
               <i className="fas fa-paint-brush mr-3 w-5 text-amber-400"></i>
@@ -97,7 +97,7 @@ export default function DashboardAdmin() {
             </Link>
 
             <Link 
-              to="/categorias" 
+              to="/dashboard/admin/categorias" 
               className="block p-3 rounded-lg hover:bg-stone-800/40 cursor-pointer"
             >
               <i className="fas fa-tags mr-3 w-5 text-amber-400"></i>

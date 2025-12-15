@@ -3,10 +3,11 @@ import { Routes, Route } from "react-router-dom";
 import Home from "../pages/site/Home";
 import NotFound from "../pages/site/NotFound";
 
-
 //Admin
 import DashboardAdmin from "../pages/admin/DashboardAdmin";
-import AgendamentosdAdmin from "../pages/admin/AgendamentosAdmin";
+import AgendamentosAdmin from "../pages/admin/AgendamentosAdmin";
+import ServicosAdmin from "../pages/admin/ServicosAdmin";
+import CategoriasAdmin from "../pages/admin/CategoriasAdmin";
 
 
 export default function AppRoutes () {
@@ -19,7 +20,9 @@ export default function AppRoutes () {
             {/*Rotas do super admin */}
             <Route path="/dashboard/admin/">
                 <Route path="" element={<DashboardAdmin />} />
-                <Route path="agendamentos" element={<AgendamentosdAdmin />} />
+                <Route path="agendamentos" element={<AgendamentosAdmin />} />
+                <Route path="servicos" element={<ServicosAdmin />} />
+                <Route path="categorias" element={<CategoriasAdmin />} />
             </Route>
         </Routes>
     )
