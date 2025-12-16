@@ -1,11 +1,13 @@
 import { useState } from "react";
 import { Link } from "react-router-dom"; 
+// Importação do logo conforme o padrão Mirashell
+import logoImg from "../../assets/img/LOGO.png";
 
 export default function CategoriasAdmin() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [termoPesquisa, setTermoPesquisa] = useState("");
 
-  // DADOS FICTÍCIOS DE CATEGORIAS
+  // DADOS FICTÍCIOS DE CATEGORIAS (Mantidos)
   const todasCategorias = [
     { id: 10, nome: "Cabelo", descricao: "Serviços de corte, styling e tratamentos capilares.", servicosAssociados: 7, ativo: true },
     { id: 20, nome: "Unhas", descricao: "Manicure, pedicure e alongamento de unhas.", servicosAssociados: 4, ativo: true },
@@ -14,42 +16,32 @@ export default function CategoriasAdmin() {
     { id: 50, nome: "Produtos", descricao: "Produtos para venda (shampoos, cremes, esmaltes).", servicosAssociados: 0, ativo: false },
   ];
   
-  // LÓGICA DE FILTRAGEM
+  // LÓGICA DE FILTRAGEM (Mantida)
   const categoriasProcessadas = todasCategorias.filter(categoria => {
-    // Filtro de Pesquisa (Busca em Nome e Descrição, mas só o nome é exibido)
     const termo = termoPesquisa.toLowerCase();
     return termo === '' || 
            categoria.nome.toLowerCase().includes(termo) || 
            categoria.descricao.toLowerCase().includes(termo);
   });
 
-  // Funções de Ação (Stubs)
-  const handleEdit = (id) => {
-    alert(`Ação: Editar Categoria ${id}`);
-  };
-
+  // Funções de Ação (Mantidas)
+  const handleEdit = (id) => alert(`Ação: Editar Categoria ${id}`);
   const handleDelete = (id, nome) => {
     if (window.confirm(`Tem certeza que deseja ELIMINAR a categoria "${nome}"? Esta ação é IRREVERSÍVEL.`)) {
       alert(`Ação: Categoria ${nome} ELIMINADA.`);
     }
   };
-  
-  const handleAdd = () => {
-    alert("Ação: Abrir formulário para Nova Categoria");
-  };
-
-  const handleLogout = () => {
-    alert("Ação: Logout Realizado!");
-  };
+  const handleAdd = () => alert("Ação: Abrir formulário para Nova Categoria");
+  const handleLogout = () => alert("Ação: Logout Realizado!");
 
   return (
-    <div className="min-h-screen bg-stone-950 text-white flex">
+    <div className="min-h-screen bg-stone-50 text-stone-800 flex">
 
-      {/* SIDEBAR (Reutilizado) */}
+      {/* SIDEBAR - ESTRUTURA E LINKS ORIGINAIS */}
       <aside
         className={`
-          bg-stone-900/40 backdrop-blur-xl border-r border-stone-800 
-          w-64 fixed top-0 left-0 h-screen p-6 shadow-2xl
+          bg-white border-r border-stone-200 
+          w-64 fixed top-0 left-0 h-screen p-6 shadow-lg
           transition-transform duration-300
           ${sidebarOpen ? "translate-x-0" : "-translate-x-64"}
           md:translate-x-0
@@ -58,129 +50,94 @@ export default function CategoriasAdmin() {
         `}
       >
         <div>
-          {/* BOTÃO FECHAR MOBILE */}
           <button
-            className="md:hidden absolute top-4 right-4 text-2xl text-white"
+            className="md:hidden absolute top-4 right-4 text-2xl text-stone-600"
             onClick={() => setSidebarOpen(false)}
           >
             <i className="fas fa-times"></i>
           </button>
 
-          {/* LOGO: MIRASHELL */}
-          <h1 className="text-2xl font-bold mb-10 tracking-wide mt-6 md:mt-0 text-amber-400">
-            <i className="fas fa-cut mr-2"></i> Mira<span className="text-white">shell</span>
-          </h1>
+          {/* LOGO: MIRASHELL PADRÃO */}
+          <div className="flex flex-col items-center mb-10 mt-2">
+            <div className="relative p-1 border-2 border-[#A2672D] rounded-full shadow-md overflow-hidden bg-white">
+               <img src={logoImg} alt="MiraShell Logo" className="w-20 h-20 md:w-24 md:h-24 object-cover rounded-full" />
+            </div>
+            <span className="mt-3 font-bold text-[#A2672D] tracking-widest text-sm uppercase">Mirashell</span>
+          </div>
 
-          {/* MENU PRINCIPAL - ATUALIZANDO O ITEM ATIVO */}
           <nav className="space-y-4 text-lg">
-            <Link to="/dashboard/admin" className="block p-3 rounded-lg hover:bg-stone-800/40 cursor-pointer">
-              <i className="fas fa-chart-line mr-3 w-5 text-amber-400"></i> Dashboard
+            <Link to="/dashboard/admin" className="block p-3 rounded-lg hover:bg-stone-50 text-stone-600 hover:text-[#A2672D]">
+              <i className="fas fa-chart-line mr-3 w-5 text-[#A2672D]"></i> Dashboard
             </Link>
-            <Link to="/dashboard/agendamentos" className="block p-3 rounded-lg hover:bg-stone-800/40 cursor-pointer">
-              <i className="fas fa-calendar-check mr-3 w-5 text-amber-400"></i> Agendamentos
+            <Link to="/dashboard/agendamentos" className="block p-3 rounded-lg hover:bg-stone-50 text-stone-600 hover:text-[#A2672D]">
+              <i className="fas fa-calendar-check mr-3 w-5 text-[#A2672D]"></i> Agendamentos
             </Link>
-            <Link to="/servicos" className="block p-3 rounded-lg hover:bg-stone-800/40 cursor-pointer">
-              <i className="fas fa-paint-brush mr-3 w-5 text-amber-400"></i> Serviços
+            <Link to="/servicos" className="block p-3 rounded-lg hover:bg-stone-50 text-stone-600 hover:text-[#A2672D]">
+              <i className="fas fa-paint-brush mr-3 w-5 text-[#A2672D]"></i> Serviços
             </Link>
             
             <Link 
               to="/categorias" 
-              className="block p-3 rounded-lg bg-stone-800/60 border-l-4 border-amber-400 font-semibold text-amber-300" // ATIVO
+              className="block p-3 rounded-lg bg-stone-100 border-l-4 border-[#A2672D] font-semibold text-[#A2672D]"
             >
               <i className="fas fa-tags mr-3 w-5"></i> Categorias
             </Link>
             
-            <Link to="/produtos" className="block p-3 rounded-lg hover:bg-stone-800/40 cursor-pointer">
-              <i className="fas fa-box-open mr-3 w-5 text-amber-400"></i> Produtos
+            <Link to="/produtos" className="block p-3 rounded-lg hover:bg-stone-50 text-stone-600 hover:text-[#A2672D]">
+              <i className="fas fa-box-open mr-3 w-5 text-[#A2672D]"></i> Produtos
             </Link>
-            <Link to="/encomendas" className="block p-3 rounded-lg hover:bg-stone-800/40 cursor-pointer">
-              <i className="fas fa-shipping-fast mr-3 w-5 text-amber-400"></i> Encomendas
+            <Link to="/encomendas" className="block p-3 rounded-lg hover:bg-stone-50 text-stone-600 hover:text-[#A2672D]">
+              <i className="fas fa-shipping-fast mr-3 w-5 text-[#A2672D]"></i> Encomendas
             </Link>
-            <Link to="/equipe" className="block p-3 rounded-lg hover:bg-stone-800/40 cursor-pointer">
-              <i className="fas fa-users-cog mr-3 w-5 text-amber-400"></i> Equipe
+            <Link to="/equipe" className="block p-3 rounded-lg hover:bg-stone-50 text-stone-600 hover:text-[#A2672D]">
+              <i className="fas fa-users-cog mr-3 w-5 text-[#A2672D]"></i> Equipe
             </Link>
           </nav>
         </div>
 
-        {/* BOTÃO LOGOUT */}
         <button 
           onClick={handleLogout}
-          className="
-            w-full mt-8 flex items-center p-3 rounded-lg 
-            bg-stone-800 border border-stone-700 
-            hover:bg-stone-700/60 
-            transition duration-200 font-semibold 
-            text-amber-400 text-lg
-          "
+          className="w-full mt-8 flex items-center p-3 rounded-lg bg-white border border-stone-200 hover:bg-stone-50 transition font-semibold text-[#A2672D] text-lg"
         >
           <i className="fas fa-sign-out-alt mr-3 w-5"></i>
           Sair
         </button>
       </aside>
 
-      {/* BACKDROP MOBILE */}
-      {sidebarOpen && (
-        <div
-          className="fixed inset-0 bg-black/50 backdrop-blur-sm md:hidden z-40"
-          onClick={() => setSidebarOpen(false)}
-        ></div>
-      )}
-
       {/* ÁREA PRINCIPAL */}
       <div className="flex-1 md:ml-64 overflow-y-auto"> 
-        {/* HEADER (Reutilizado) */}
         <header
           className="
-            bg-stone-900/40 backdrop-blur-xl border-b border-stone-800
+            bg-white border-b border-stone-200
             fixed top-0 right-0 left-0 md:left-64
-            h-16 flex items-center justify-between px-4 sm:px-6 shadow-xl
+            h-16 flex items-center justify-between px-4 sm:px-6 shadow-sm
             z-30
           "
         >
-          {/* Botão mobile para abrir o sidebar */}
-          <button
-            className="md:hidden text-xl sm:text-2xl"
-            onClick={() => setSidebarOpen(!sidebarOpen)}
-          >
+          <button className="md:hidden text-xl text-stone-600" onClick={() => setSidebarOpen(!sidebarOpen)}>
             <i className="fas fa-bars"></i>
           </button>
 
-          <h2 className="text-lg sm:text-xl font-light tracking-wide text-white/90">
+          <h2 className="text-lg sm:text-xl font-medium tracking-wide text-stone-700">
             Gestão de Categorias
           </h2>
 
-          {/* Notificações + Perfil */}
-          <div className="flex items-center gap-4 sm:gap-6">
-            <button className="relative text-xl sm:text-2xl text-amber-400 hover:text-amber-300 transition-all">
-              <i className="fas fa-bell"></i>
-              <span
-                className="
-                  absolute -top-1 -right-1 bg-red-600 text-white text-[10px]
-                  w-4 h-4 rounded-full flex items-center justify-center font-bold
-                "
-              >
-                3
-              </span>
-            </button>
-
-            <div className="flex items-center gap-3">
-              <span className="text-sm opacity-80 hidden sm:block">Admin</span>
-              <div className="w-9 h-9 sm:w-10 sm:h-10 bg-amber-600 rounded-full flex items-center justify-center">
-                <i className="fas fa-user text-white text-base"></i>
-              </div>
+          <div className="flex items-center gap-3">
+            <span className="text-sm opacity-80 hidden sm:block text-stone-500 font-medium">Admin</span>
+            <div className="w-10 h-10 bg-[#A2672D] rounded-full flex items-center justify-center text-white shadow-md">
+              <i className="fas fa-user"></i>
             </div>
           </div>
         </header>
 
-        {/* CONTEÚDO PRINCIPAL: TABELA DE CATEGORIAS */}
-        <main className="mt-20 p-4 sm:p-6 space-y-8 sm:space-y-10">
+        <main className="mt-20 p-4 sm:p-6 space-y-8">
           
-          <div className="bg-stone-900/30 border border-stone-800 rounded-xl shadow-xl backdrop-blur-md p-4 sm:p-6">
+          <div className="bg-white border border-stone-200 rounded-xl shadow-sm p-4 sm:p-6">
             <div className="flex justify-between items-center mb-6 flex-wrap gap-4">
-                <h3 className="text-2xl font-bold text-amber-400">Estrutura de Categorias ({todasCategorias.length})</h3>
+                <h3 className="text-xl font-bold text-[#A2672D]">Estrutura de Categorias ({todasCategorias.length})</h3>
                 <button 
                     onClick={handleAdd}
-                    className="flex items-center gap-2 px-4 py-2 bg-amber-600 text-white font-semibold rounded-lg hover:bg-amber-700 transition-colors shadow-lg"
+                    className="flex items-center gap-2 px-4 py-2 bg-[#A2672D] text-white font-semibold rounded-lg hover:opacity-90 transition-all shadow-md"
                 >
                     <i className="fas fa-plus"></i>
                     Nova Categoria
@@ -192,19 +149,18 @@ export default function CategoriasAdmin() {
               <div className="relative w-full sm:w-80">
                 <input
                   type="text"
-                  placeholder="Pesquisar por nome ou descrição..."
+                  placeholder="Pesquisar categoria..."
                   value={termoPesquisa}
                   onChange={(e) => setTermoPesquisa(e.target.value)}
-                  className="w-full py-2 pl-10 pr-4 bg-stone-800 border border-stone-700 rounded-lg focus:ring-amber-500 focus:border-amber-500 text-white/90 placeholder-white/50 transition-colors"
+                  className="w-full py-2 pl-10 pr-4 bg-stone-50 border border-stone-200 rounded-lg focus:ring-[#A2672D] focus:border-[#A2672D] text-stone-700 placeholder-stone-400"
                 />
-                <i className="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-white/50"></i>
+                <i className="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-stone-400"></i>
               </div>
               
-              {/* Botão de Limpar Pesquisa */}
               {termoPesquisa && (
                   <button 
                       onClick={() => setTermoPesquisa('')}
-                      className="px-3 py-2 bg-stone-700/50 rounded-lg text-white/70 hover:bg-stone-700 transition-colors shrink-0"
+                      className="px-3 py-2 bg-stone-100 rounded-lg text-stone-500 hover:bg-stone-200 transition-colors shrink-0"
                       title="Limpar pesquisa"
                   >
                       <i className="fas fa-sync-alt"></i>
@@ -212,40 +168,38 @@ export default function CategoriasAdmin() {
               )}
             </div>
 
-            {/* TABELA START (Ações atualizadas) */}
+            {/* TABELA DE CATEGORIAS */}
             <div className="overflow-x-auto">
               <table className="min-w-full w-full text-left border-collapse text-sm"> 
                 <thead>
-                  <tr className="text-amber-300 border-b border-stone-800/70">
-                    <th className="p-3 whitespace-nowrap">ID</th>
-                    <th className="p-3 whitespace-nowrap">Nome</th>
-                    <th className="p-3 text-center whitespace-nowrap">Ações</th>
+                  <tr className="text-[#A2672D] border-b border-stone-200 uppercase tracking-wider text-xs font-bold">
+                    <th className="p-3">ID</th>
+                    <th className="p-3">Nome</th>
+                    <th className="p-3 text-center">Ações</th>
                   </tr>
                 </thead>
 
-                <tbody>
+                <tbody className="text-stone-600">
                   {categoriasProcessadas.length > 0 ? (
                     categoriasProcessadas.map((categoria) => (
                       <tr
                         key={categoria.id}
-                        className="border-b border-stone-800/40 hover:bg-stone-900/40 transition-colors"
+                        className="border-b border-stone-50 hover:bg-stone-50 transition-colors"
                       >
-                        <td className="p-3 opacity-70 whitespace-nowrap">{categoria.id}</td>
-                        <td className="p-3 font-medium whitespace-nowrap">{categoria.nome}</td>
+                        <td className="p-3 opacity-60">#{categoria.id}</td>
+                        <td className="p-3 font-medium text-stone-800">{categoria.nome}</td>
                         
-                        {/* COLUNA DE AÇÕES: Editar e Eliminar */}
-                        <td className="p-3 text-center whitespace-nowrap">
+                        <td className="p-3 text-center">
                           <div className="flex justify-center space-x-3 text-base">
                             <button 
-                              className="text-amber-400 hover:text-amber-300 transition-colors"
+                              className="text-[#A2672D] hover:opacity-70 transition-colors"
                               onClick={() => handleEdit(categoria.id)}
                               title="Editar Categoria"
                             >
                               <i className="fas fa-edit"></i>
                             </button>
-                            {/* Botão Eliminar */}
                             <button 
-                              className="text-red-500 hover:text-red-400 transition-colors"
+                              className="text-red-400 hover:text-red-600 transition-colors"
                               onClick={() => handleDelete(categoria.id, categoria.nome)}
                               title="Eliminar Categoria"
                             >
@@ -257,21 +211,17 @@ export default function CategoriasAdmin() {
                     ))
                   ) : (
                     <tr>
-                      <td colSpan="3" className="p-6 text-center text-white/60">
-                        Nenhuma categoria encontrada com o termo de pesquisa.
+                      <td colSpan="3" className="p-10 text-center text-stone-400 italic">
+                        Nenhuma categoria encontrada.
                       </td>
                     </tr>
                   )}
                 </tbody>
               </table>
             </div>
-            {/* TABLE END */}
 
-            {/* Rodapé da Tabela */}
-            <div className="flex justify-between items-center mt-6">
-              <p className="opacity-70 text-sm">
-                Total de {todasCategorias.length} Categorias
-              </p>
+            <div className="mt-6 pt-4 border-t border-stone-100 flex justify-between items-center text-stone-400 text-xs">
+              <p>Total de {todasCategorias.length} categorias cadastradas.</p>
             </div>
 
           </div>

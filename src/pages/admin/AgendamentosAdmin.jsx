@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom"; 
+// Importação do logo conforme o padrão que você definiu
+import logoImg from "../../assets/img/LOGO.png";
 
 export default function AgendamentosAdmin() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -8,7 +10,7 @@ export default function AgendamentosAdmin() {
   const [dataSelecionada, setDataSelecionada] = useState("");
   const [termoPesquisa, setTermoPesquisa] = useState("");
 
-  // DADOS FICTÍCIOS DE AGENDAMENTOS (Mais detalhado que o Dashboard)
+  // DADOS FICTÍCIOS DE AGENDAMENTOS (MANTIDOS)
   const todosAgendamentos = [
     { id: 201, nomeCliente: "Esmeralda Mendes", servico: "Unhas de Gel", data: "2025-12-16", hora: "09:00", profissional: "Sofia", status: "Confirmado" },
     { id: 202, nomeCliente: "Adilson Ngola", servico: "Corte Masculino", data: "2025-12-16", hora: "10:00", profissional: "Pedro", status: "Confirmado" },
@@ -19,66 +21,44 @@ export default function AgendamentosAdmin() {
     { id: 207, nomeCliente: "Carla Pires", servico: "Pintura + Secagem", data: "2025-12-19", hora: "15:30", profissional: "Sofia", status: "Pendente" },
   ];
 
-  // LOGICA DE FILTRAGEM
+  // LOGICA DE FILTRAGEM (MANTIDA)
   const agendamentosFiltrados = todosAgendamentos.filter(agendamento => {
-    // 1. Filtro de Pesquisa (Nome/Serviço)
     const buscaMatch = termoPesquisa.toLowerCase() === '' || 
                        agendamento.nomeCliente.toLowerCase().includes(termoPesquisa.toLowerCase()) || 
                        agendamento.servico.toLowerCase().includes(termoPesquisa.toLowerCase());
-    
-    // 2. Filtro de Status
     const statusMatch = filtroStatus === '' || agendamento.status === filtroStatus;
-    
-    // 3. Filtro de Data
     const dataMatch = dataSelecionada === '' || agendamento.data === dataSelecionada;
-
     return buscaMatch && statusMatch && dataMatch;
   });
 
-
-  // Funções de Ação (Apenas stubs para demonstração)
-  const handleEdit = (id) => {
-    alert(`Ação: Editar Agendamento ${id}`);
-  };
-
+  const handleEdit = (id) => alert(`Ação: Editar Agendamento ${id}`);
   const handleDelete = (id) => {
     if (window.confirm(`Tem certeza que deseja eliminar o agendamento ${id}?`)) {
       alert(`Ação: Agendamento ${id} Eliminado`);
     }
   };
+  const handleAdd = () => alert("Ação: Abrir formulário para Novo Agendamento");
+  const handleLogout = () => alert("Ação: Logout Realizado!");
   
-  const handleAdd = () => {
-    alert("Ação: Abrir formulário para Novo Agendamento");
-  };
-
-  const handleLogout = () => {
-    alert("Ação: Logout Realizado!");
-  };
-  
-  // Função para mapear status para classes Tailwind
+  // Mapeamento de status para o seu novo padrão de cores
   const getStatusClasses = (status) => {
     switch (status) {
-      case 'Confirmado':
-        return 'bg-green-600/30 text-green-300';
-      case 'Pendente':
-        return 'bg-amber-600/30 text-amber-300';
-      case 'Cancelado':
-        return 'bg-red-600/30 text-red-300';
-      case 'Concluído':
-        return 'bg-blue-600/30 text-blue-300';
-      default:
-        return 'bg-stone-600/30 text-stone-300';
+      case 'Confirmado': return 'bg-green-100 text-green-700';
+      case 'Pendente': return 'bg-amber-100 text-amber-700';
+      case 'Cancelado': return 'bg-red-100 text-red-700';
+      case 'Concluído': return 'bg-blue-100 text-blue-700';
+      default: return 'bg-stone-100 text-stone-700';
     }
   };
 
   return (
-    <div className="min-h-screen bg-stone-950 text-white flex">
+    <div className="min-h-screen bg-stone-50 text-stone-800 flex">
 
-      {/* SIDEBAR (Reutilizado) */}
+      {/* SIDEBAR (REESTILIZADO IGUAL AO DASHBOARD) */}
       <aside
         className={`
-          bg-stone-900/40 backdrop-blur-xl border-r border-stone-800 
-          w-64 fixed top-0 left-0 h-screen p-6 shadow-2xl
+          bg-white border-r border-stone-200 
+          w-64 fixed top-0 left-0 h-screen p-6 shadow-lg
           transition-transform duration-300
           ${sidebarOpen ? "translate-x-0" : "-translate-x-64"}
           md:translate-x-0
@@ -87,65 +67,58 @@ export default function AgendamentosAdmin() {
         `}
       >
         <div>
-          {/* BOTÃO FECHAR MOBILE */}
           <button
-            className="md:hidden absolute top-4 right-4 text-2xl text-white"
+            className="md:hidden absolute top-4 right-4 text-2xl text-stone-600"
             onClick={() => setSidebarOpen(false)}
           >
             <i className="fas fa-times"></i>
           </button>
 
-          {/* LOGO: MIRASHELL */}
-          <h1 className="text-2xl font-bold mb-10 tracking-wide mt-6 md:mt-0 text-amber-400">
-            <i className="fas fa-cut mr-2"></i> Mira<span className="text-white">shell</span>
-          </h1>
+          {/* LOGO CIRCULAR MANTIDA */}
+          <div className="flex flex-col items-center mb-10 mt-2">
+            <div className="relative p-1 border-2 border-[#A2672D] rounded-full shadow-md overflow-hidden bg-white">
+               <img 
+                src={logoImg} 
+                alt="MiraShell Logo" 
+                className="w-20 h-20 md:w-24 md:h-24 object-cover rounded-full" 
+              />
+            </div>
+            <span className="mt-3 font-bold text-[#A2672D] tracking-widest text-sm uppercase">Mirashell</span>
+          </div>
 
-          {/* MENU PRINCIPAL - ITENS ATUALIZADOS COM <Link> */}
           <nav className="space-y-4 text-lg">
             <Link 
               to="/dashboard/admin" 
-              className="block p-3 rounded-lg hover:bg-stone-800/40 cursor-pointer"
+              className="block p-3 rounded-lg hover:bg-stone-50 text-stone-600 hover:text-[#A2672D] transition-colors"
             >
-              <i className="fas fa-chart-line mr-3 w-5 text-amber-400"></i>
+              <i className="fas fa-chart-line mr-3 w-5 text-[#A2672D]"></i>
               Dashboard
             </Link>
 
             <Link 
-              to="/dashboard/agendamentos" 
-              className="block p-3 rounded-lg bg-stone-800/60 border-l-4 border-amber-400 font-semibold text-amber-300" // ATIVO
+              to="/dashboard/admin/agendamentos" 
+              className="block p-3 rounded-lg bg-stone-100 border-l-4 border-[#A2672D] font-semibold text-[#A2672D]"
             >
               <i className="fas fa-calendar-check mr-3 w-5"></i>
               Agendamentos
             </Link>
-            
-            <Link to="/servicos" className="block p-3 rounded-lg hover:bg-stone-800/40 cursor-pointer">
-              <i className="fas fa-paint-brush mr-3 w-5 text-amber-400"></i> Serviços
-            </Link>
-            <Link to="/categorias" className="block p-3 rounded-lg hover:bg-stone-800/40 cursor-pointer">
-              <i className="fas fa-tags mr-3 w-5 text-amber-400"></i> Categorias
-            </Link>
-            <Link to="/produtos" className="block p-3 rounded-lg hover:bg-stone-800/40 cursor-pointer">
-              <i className="fas fa-box-open mr-3 w-5 text-amber-400"></i> Produtos
-            </Link>
-            <Link to="/encomendas" className="block p-3 rounded-lg hover:bg-stone-800/40 cursor-pointer">
-              <i className="fas fa-shipping-fast mr-3 w-5 text-amber-400"></i> Encomendas
-            </Link>
-            <Link to="/equipe" className="block p-3 rounded-lg hover:bg-stone-800/40 cursor-pointer">
-              <i className="fas fa-users-cog mr-3 w-5 text-amber-400"></i> Equipe
-            </Link>
+
+            {["servicos", "categorias", "produtos", "encomendas", "equipe"].map((item) => (
+              <Link 
+                key={item}
+                to={`/dashboard/admin/${item}`} 
+                className="block p-3 rounded-lg hover:bg-stone-50 text-stone-600 hover:text-[#A2672D] transition-colors capitalize"
+              >
+                <i className={`fas fa-${item === 'servicos' ? 'paint-brush' : item === 'categorias' ? 'tags' : item === 'produtos' ? 'box-open' : item === 'encomendas' ? 'shipping-fast' : 'users-cog'} mr-3 w-5 text-[#A2672D]`}></i>
+                {item}
+              </Link>
+            ))}
           </nav>
         </div>
 
-        {/* BOTÃO LOGOUT */}
         <button 
           onClick={handleLogout}
-          className="
-            w-full mt-8 flex items-center p-3 rounded-lg 
-            bg-stone-800 border border-stone-700 
-            hover:bg-stone-700/60 
-            transition duration-200 font-semibold 
-            text-amber-400 text-lg
-          "
+          className="w-full mt-8 flex items-center p-3 rounded-lg bg-white border border-stone-200 hover:bg-stone-50 transition font-semibold text-[#A2672D] text-lg shadow-sm"
         >
           <i className="fas fa-sign-out-alt mr-3 w-5"></i>
           Sair
@@ -154,93 +127,49 @@ export default function AgendamentosAdmin() {
 
       {/* BACKDROP MOBILE */}
       {sidebarOpen && (
-        <div
-          className="fixed inset-0 bg-black/50 backdrop-blur-sm md:hidden z-40"
-          onClick={() => setSidebarOpen(false)}
-        ></div>
+        <div className="fixed inset-0 bg-stone-900/20 backdrop-blur-sm md:hidden z-40" onClick={() => setSidebarOpen(false)}></div>
       )}
 
       {/* ÁREA PRINCIPAL */}
       <div className="flex-1 md:ml-64 overflow-y-auto"> 
-        {/* HEADER (Reutilizado) */}
-        <header
-          className="
-            bg-stone-900/40 backdrop-blur-xl border-b border-stone-800
-            fixed top-0 right-0 left-0 md:left-64
-            h-16 flex items-center justify-between px-4 sm:px-6 shadow-xl
-            z-30
-          "
-        >
-          {/* Botão mobile para abrir o sidebar */}
-          <button
-            className="md:hidden text-xl sm:text-2xl"
-            onClick={() => setSidebarOpen(!sidebarOpen)}
-          >
+        <header className="bg-white border-b border-stone-200 fixed top-0 right-0 left-0 md:left-64 h-16 flex items-center justify-between px-4 sm:px-6 shadow-sm z-30">
+          <button className="md:hidden text-xl sm:text-2xl text-stone-600" onClick={() => setSidebarOpen(!sidebarOpen)}>
             <i className="fas fa-bars"></i>
           </button>
-
-          <h2 className="text-lg sm:text-xl font-light tracking-wide text-white/90">
-            Gestão de Agendamentos
-          </h2>
-
-          {/* Notificações + Perfil */}
-          <div className="flex items-center gap-4 sm:gap-6">
-            <button className="relative text-xl sm:text-2xl text-amber-400 hover:text-amber-300 transition-all">
-              <i className="fas fa-bell"></i>
-              <span
-                className="
-                  absolute -top-1 -right-1 bg-red-600 text-white text-[10px]
-                  w-4 h-4 rounded-full flex items-center justify-center font-bold
-                "
-              >
-                3
-              </span>
-            </button>
-
-            <div className="flex items-center gap-3">
-              <span className="text-sm opacity-80 hidden sm:block">Admin</span>
-              <div className="w-9 h-9 sm:w-10 sm:h-10 bg-amber-600 rounded-full flex items-center justify-center">
+          <h2 className="text-lg sm:text-xl font-medium tracking-wide text-stone-700">Gestão de Agendamentos</h2>
+          <div className="flex items-center gap-4">
+             <div className="w-9 h-9 sm:w-10 sm:h-10 bg-[#A2672D] rounded-full flex items-center justify-center">
                 <i className="fas fa-user text-white text-base"></i>
               </div>
-            </div>
           </div>
         </header>
 
-        {/* CONTEÚDO PRINCIPAL: TABELA DE AGENDAMENTOS */}
-        <main className="mt-20 p-4 sm:p-6 space-y-8 sm:space-y-10">
-          
-          <div className="bg-stone-900/30 border border-stone-800 rounded-xl shadow-xl backdrop-blur-md p-4 sm:p-6">
+        <main className="mt-20 p-4 sm:p-6 space-y-8">
+          <div className="bg-white border border-stone-200 rounded-xl shadow-sm p-4 sm:p-6">
             <div className="flex justify-between items-center mb-6 flex-wrap gap-4">
-                <h3 className="text-2xl font-bold text-amber-400">Lista de Agendamentos ({agendamentosFiltrados.length})</h3>
-                <button 
-                    onClick={handleAdd}
-                    className="flex items-center gap-2 px-4 py-2 bg-amber-600 text-white font-semibold rounded-lg hover:bg-amber-700 transition-colors shadow-lg"
-                >
-                    <i className="fas fa-plus"></i>
-                    Novo Agendamento
+                <h3 className="text-xl font-bold text-[#A2672D]">Lista de Agendamentos ({agendamentosFiltrados.length})</h3>
+                <button onClick={handleAdd} className="flex items-center gap-2 px-4 py-2 bg-[#A2672D] text-white font-semibold rounded-lg hover:opacity-90 transition-all shadow-md">
+                    <i className="fas fa-plus"></i> Novo Agendamento
                 </button>
             </div>
 
-            {/* BARRA DE PESQUISA E FILTROS */}
+            {/* FILTROS (REESTILIZADOS) */}
             <div className="flex flex-col lg:flex-row justify-start items-start lg:items-center mb-6 gap-4 flex-wrap">
-              
-              {/* Pesquisa */}
-              <div className="relative w-full sm:w-auto flex-1 min-w-62.5">
+              <div className="relative w-full sm:w-auto flex-1">
                 <input
                   type="text"
                   placeholder="Pesquisar Cliente ou Serviço..."
                   value={termoPesquisa}
                   onChange={(e) => setTermoPesquisa(e.target.value)}
-                  className="w-full py-2 pl-10 pr-4 bg-stone-800 border border-stone-700 rounded-lg focus:ring-amber-500 focus:border-amber-500 text-white/90 placeholder-white/50 transition-colors"
+                  className="w-full py-2 pl-10 pr-4 bg-stone-50 border border-stone-200 rounded-lg focus:ring-[#A2672D] focus:border-[#A2672D] text-stone-700"
                 />
-                <i className="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-white/50"></i>
+                <i className="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-stone-400"></i>
               </div>
 
-              {/* Filtro por Status */}
               <select 
                 value={filtroStatus}
                 onChange={(e) => setFiltroStatus(e.target.value)}
-                className="w-full sm:w-auto py-2 px-3 bg-stone-800 border border-stone-700 rounded-lg focus:ring-amber-500 focus:border-amber-500 text-white/90 appearance-none pr-8 cursor-pointer"
+                className="w-full sm:w-auto py-2 px-3 bg-stone-50 border border-stone-200 rounded-lg text-stone-700"
               >
                 <option value="">Status (Todos)</option>
                 <option value="Confirmado">Confirmado</option>
@@ -249,99 +178,58 @@ export default function AgendamentosAdmin() {
                 <option value="Cancelado">Cancelado</option>
               </select>
 
-              {/* Filtro por Data */}
               <input
                 type="date"
                 value={dataSelecionada}
                 onChange={(e) => setDataSelecionada(e.target.value)}
-                className="w-full sm:w-auto py-2 px-3 bg-stone-800 border border-stone-700 rounded-lg focus:ring-amber-500 focus:border-amber-500 text-white/90 cursor-pointer"
+                className="w-full sm:w-auto py-2 px-3 bg-stone-50 border border-stone-200 rounded-lg text-stone-700"
               />
-              
-              {/* Botão de Limpar Filtros */}
-              {(filtroStatus || filtroServico || dataSelecionada || termoPesquisa) && (
-                  <button 
-                      onClick={() => {setFiltroStatus(''); setFiltroServico(''); setDataSelecionada(''); setTermoPesquisa('');}}
-                      className="px-3 py-2 bg-stone-700/50 rounded-lg text-white/70 hover:bg-stone-700 transition-colors"
-                  >
-                      <i className="fas fa-sync-alt mr-1"></i> Limpar
-                  </button>
-              )}
             </div>
 
-            {/* TABELA START (Adicionado overflow-x-auto) */}
             <div className="overflow-x-auto">
               <table className="min-w-full w-full text-left border-collapse text-sm"> 
                 <thead>
-                  <tr className="text-amber-300 border-b border-stone-800/70">
-                    <th className="p-3 whitespace-nowrap">ID</th>
-                    <th className="p-3 whitespace-nowrap">Cliente</th>
-                    <th className="p-3 whitespace-nowrap">Serviço</th>
-                    <th className="p-3 whitespace-nowrap">Data</th>
-                    <th className="p-3 whitespace-nowrap">Hora</th>
-                    <th className="p-3 whitespace-nowrap">Profissional</th>
-                    <th className="p-3 text-center whitespace-nowrap">Status</th>
-                    <th className="p-3 text-center whitespace-nowrap">Ações</th>
+                  <tr className="text-[#A2672D] border-b border-stone-200">
+                    <th className="p-3">ID</th>
+                    <th className="p-3">Cliente</th>
+                    <th className="p-3">Serviço</th>
+                    <th className="p-3 text-center">Data/Hora</th>
+                    <th className="p-3">Profissional</th>
+                    <th className="p-3 text-center">Status</th>
+                    <th className="p-3 text-center">Ações</th>
                   </tr>
                 </thead>
-
-                <tbody>
+                <tbody className="text-stone-600">
                   {agendamentosFiltrados.length > 0 ? (
                     agendamentosFiltrados.map((agendamento) => (
-                      <tr
-                        key={agendamento.id}
-                        className="border-b border-stone-800/40 hover:bg-stone-900/40 transition-colors"
-                      >
-                        <td className="p-3 opacity-70 whitespace-nowrap">{agendamento.id}</td>
-                        <td className="p-3 font-medium whitespace-nowrap">{agendamento.nomeCliente}</td>
-                        <td className="p-3 whitespace-nowrap">{agendamento.servico}</td>
-                        <td className="p-3 whitespace-nowrap">{agendamento.data}</td>
-                        <td className="p-3 whitespace-nowrap font-bold text-amber-300">{agendamento.hora}</td>
-                        <td className="p-3 whitespace-nowrap opacity-90">{agendamento.profissional}</td>
-                        <td className="p-3 text-center whitespace-nowrap">
-                          <span className={`px-3 py-1 rounded-lg text-xs font-semibold ${getStatusClasses(agendamento.status)}`}>
+                      <tr key={agendamento.id} className="border-b border-stone-50 hover:bg-stone-50 transition-colors">
+                        <td className="p-3 opacity-70">{agendamento.id}</td>
+                        <td className="p-3 font-medium text-stone-800">{agendamento.nomeCliente}</td>
+                        <td className="p-3">{agendamento.servico}</td>
+                        <td className="p-3 text-center">
+                          <div className="font-medium text-stone-700">{agendamento.data}</div>
+                          <div className="text-xs font-bold text-[#A2672D]">{agendamento.hora}</div>
+                        </td>
+                        <td className="p-3">{agendamento.profissional}</td>
+                        <td className="p-3 text-center">
+                          <span className={`px-3 py-1 rounded-lg text-xs font-medium ${getStatusClasses(agendamento.status)}`}>
                             {agendamento.status}
                           </span>
                         </td>
-                        {/* COLUNA DE AÇÕES */}
-                        <td className="p-3 text-center whitespace-nowrap">
+                        <td className="p-3 text-center">
                           <div className="flex justify-center space-x-3 text-base">
-                            <button 
-                              className="text-amber-400 hover:text-amber-300 transition-colors"
-                              onClick={() => handleEdit(agendamento.id)}
-                              title="Editar Agendamento"
-                            >
-                              <i className="fas fa-edit"></i>
-                            </button>
-                            <button 
-                              className="text-red-500 hover:text-red-400 transition-colors"
-                              onClick={() => handleDelete(agendamento.id)}
-                              title="Eliminar Agendamento"
-                            >
-                              <i className="fas fa-trash-alt"></i>
-                            </button>
+                            <button className="text-[#A2672D] hover:opacity-70" onClick={() => handleEdit(agendamento.id)}><i className="fas fa-edit"></i></button>
+                            <button className="text-red-500 hover:text-red-600" onClick={() => handleDelete(agendamento.id)}><i className="fas fa-trash-alt"></i></button>
                           </div>
                         </td>
                       </tr>
                     ))
                   ) : (
-                    <tr>
-                      <td colSpan="8" className="p-6 text-center text-white/60">
-                        Nenhum agendamento encontrado com os filtros aplicados.
-                      </td>
-                    </tr>
+                    <tr><td colSpan="7" className="p-6 text-center text-stone-400">Nenhum registro encontrado.</td></tr>
                   )}
                 </tbody>
               </table>
             </div>
-            {/* TABLE END */}
-
-            {/* PAGINAÇÃO (Simples) */}
-            <div className="flex justify-between items-center mt-6">
-              <p className="opacity-70 text-sm">
-                Mostrando {agendamentosFiltrados.length} de {todosAgendamentos.length} Agendamentos
-              </p>
-            </div>
-
           </div>
         </main>
       </div>

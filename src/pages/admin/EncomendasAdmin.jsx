@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom"; 
+// Importação do logo circular Mirashell
+import logoImg from "../../assets/img/LOGO.png";
 
 export default function EncomendasAdmin() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -7,7 +9,7 @@ export default function EncomendasAdmin() {
   const [termoPesquisa, setTermoPesquisa] = useState("");
   const [ordenacao, setOrdenacao] = useState("data_desc");
 
-  // DADOS FICTÍCIOS DE ENCOMENDAS (Detalhado)
+  // DADOS FICTÍCIOS DE ENCOMENDAS
   const todasEncomendas = [
     { 
       id: 301, 
@@ -44,277 +46,128 @@ export default function EncomendasAdmin() {
     },
   ];
   
-  // Opções de status para o filtro
   const statusOpcoes = ["Pendente", "Enviada", "Entregue", "Cancelada"];
 
   // LÓGICA DE FILTRAGEM E ORDENAÇÃO
   let encomendasProcessadas = todasEncomendas.filter(encomenda => {
-    // 1. Filtro de Pesquisa (Cliente, ID, ou Telefone)
     const termo = termoPesquisa.toLowerCase();
     const buscaMatch = termo === '' || 
                        encomenda.cliente.toLowerCase().includes(termo) || 
                        encomenda.telefone.includes(termo) ||
                        encomenda.id.toString().includes(termo);
-    
-    // 2. Filtro de Status
     const statusMatch = filtroStatus === '' || encomenda.status === filtroStatus;
-    
     return buscaMatch && statusMatch;
   });
 
-  // 3. Ordenação
   encomendasProcessadas.sort((a, b) => {
     switch (ordenacao) {
-      case 'data_desc':
-        return new Date(b.data) - new Date(a.data);
-      case 'total_desc':
-        return b.total - a.total;
-      case 'cliente_asc':
-        return a.cliente.localeCompare(b.cliente);
-      default:
-        return 0;
+      case 'data_desc': return new Date(b.data) - new Date(a.data);
+      case 'total_desc': return b.total - a.total;
+      case 'cliente_asc': return a.cliente.localeCompare(b.cliente);
+      default: return 0;
     }
   });
 
-  // Funções de Ação (Stubs)
-  const handleGeneratePDF = (id) => {
-    alert(`Ação: Gerar PDF/Fatura da Encomenda ${id}`);
-  };
-
+  const handleGeneratePDF = (id) => alert(`Ação: Gerar PDF/Fatura da Encomenda ${id}`);
   const handleDelete = (id, cliente) => {
     if (window.confirm(`Tem certeza que deseja ELIMINAR a Encomenda ${id} do cliente ${cliente}? Esta ação é IRREVERSÍVEL.`)) {
       alert(`Ação: Encomenda ${id} ELIMINADA.`);
     }
   };
-  
-  const handleAdd = () => {
-    alert("Ação: Abrir formulário para Nova Encomenda Manual");
-  };
+  const handleAdd = () => alert("Ação: Abrir formulário para Nova Encomenda Manual");
+  const handleLogout = () => alert("Ação: Logout Realizado!");
+  const formatarPreco = (preco) => `Kz ${preco.toLocaleString('pt-AO')}`;
 
-  const handleLogout = () => {
-    alert("Ação: Logout Realizado!");
-  };
-  
-  // Formata o preço para Kz (Kwanza)
-  const formatarPreco = (preco) => {
-    return `Kz ${preco.toLocaleString('pt-AO')}`;
-  };
-
-  // Mapeamento de cores para status
   const getStatusClasses = (status) => {
     switch (status) {
-      case 'Entregue':
-        return 'bg-green-600/30 text-green-300';
-      case 'Enviada':
-        return 'bg-blue-600/30 text-blue-300';
-      case 'Pendente':
-        return 'bg-yellow-600/30 text-yellow-300';
-      case 'Cancelada':
-        return 'bg-red-600/30 text-red-300';
-      default:
-        return 'bg-stone-600/30 text-stone-300';
+      case 'Entregue': return 'bg-green-600/30 text-green-300';
+      case 'Enviada': return 'bg-blue-600/30 text-blue-300';
+      case 'Pendente': return 'bg-yellow-600/30 text-yellow-300';
+      case 'Cancelada': return 'bg-red-600/30 text-red-300';
+      default: return 'bg-stone-600/30 text-stone-300';
     }
   };
 
   return (
-    <div className="min-h-screen bg-stone-950 text-white flex">
+    <div className="min-h-screen bg-stone-50 text-stone-900 flex">
 
-      {/* SIDEBAR (Reutilizado) */}
-      <aside
-        className={`
-          bg-stone-900/40 backdrop-blur-xl border-r border-stone-800 
-          w-64 fixed top-0 left-0 h-screen p-6 shadow-2xl
-          transition-transform duration-300
-          ${sidebarOpen ? "translate-x-0" : "-translate-x-64"}
-          md:translate-x-0
-          z-50 flex flex-col justify-between
-          overflow-y-auto
-        `}
-      >
+      {/* SIDEBAR MIRASHELL */}
+      <aside className={`bg-white border-r border-stone-200 w-64 fixed top-0 left-0 h-screen p-6 shadow-lg transition-transform duration-300 ${sidebarOpen ? "translate-x-0" : "-translate-x-64"} md:translate-x-0 z-50 flex flex-col justify-between overflow-y-auto`}>
         <div>
-          {/* BOTÃO FECHAR MOBILE */}
-          <button
-            className="md:hidden absolute top-4 right-4 text-2xl text-white"
-            onClick={() => setSidebarOpen(false)}
-          >
+          <button className="md:hidden absolute top-4 right-4 text-2xl text-stone-600" onClick={() => setSidebarOpen(false)}>
             <i className="fas fa-times"></i>
           </button>
 
-          {/* LOGO: MIRASHELL */}
-          <h1 className="text-2xl font-bold mb-10 tracking-wide mt-6 md:mt-0 text-amber-400">
-            <i className="fas fa-cut mr-2"></i> Mira<span className="text-white">shell</span>
-          </h1>
+          {/* LOGO CIRCULAR */}
+          <div className="flex flex-col items-center mb-10 mt-2">
+            <div className="relative p-1 border-2 border-[#A2672D] rounded-full shadow-md overflow-hidden bg-white">
+               <img src={logoImg} alt="MiraShell Logo" className="w-20 h-20 md:w-24 md:h-24 object-cover rounded-full" />
+            </div>
+            <span className="mt-3 font-bold text-[#A2672D] tracking-widest text-sm uppercase">Mirashell</span>
+          </div>
 
-          {/* MENU PRINCIPAL - ATUALIZANDO O ITEM ATIVO */}
-          <nav className="space-y-4 text-lg">
-            <Link to="/dashboard/admin" className="block p-3 rounded-lg hover:bg-stone-800/40 cursor-pointer">
-              <i className="fas fa-chart-line mr-3 w-5 text-amber-400"></i> Dashboard
-            </Link>
-            <Link to="/dashboard/agendamentos" className="block p-3 rounded-lg hover:bg-stone-800/40 cursor-pointer">
-              <i className="fas fa-calendar-check mr-3 w-5 text-amber-400"></i> Agendamentos
-            </Link>
-            <Link to="/servicos" className="block p-3 rounded-lg hover:bg-stone-800/40 cursor-pointer">
-              <i className="fas fa-paint-brush mr-3 w-5 text-amber-400"></i> Serviços
-            </Link>
-            <Link to="/categorias" className="block p-3 rounded-lg hover:bg-stone-800/40 cursor-pointer">
-              <i className="fas fa-tags mr-3 w-5 text-amber-400"></i> Categorias
-            </Link>
-            <Link to="/produtos" className="block p-3 rounded-lg hover:bg-stone-800/40 cursor-pointer">
-              <i className="fas fa-box-open mr-3 w-5 text-amber-400"></i> Produtos
-            </Link>
-            
-            <Link 
-              to="/encomendas" 
-              className="block p-3 rounded-lg bg-stone-800/60 border-l-4 border-amber-400 font-semibold text-amber-300" // ATIVO
-            >
-              <i className="fas fa-shipping-fast mr-3 w-5"></i> Encomendas
-            </Link>
-            
-            <Link to="/equipe" className="block p-3 rounded-lg hover:bg-stone-800/40 cursor-pointer">
-              <i className="fas fa-users-cog mr-3 w-5 text-amber-400"></i> Equipe
-            </Link>
+          <nav className="space-y-4 text-lg text-stone-600">
+            <Link to="/dashboard/admin" className="block p-3 rounded-lg hover:bg-stone-50"><i className="fas fa-chart-line mr-3 w-5 text-[#A2672D]"></i> Dashboard</Link>
+            <Link to="/dashboard/agendamentos" className="block p-3 rounded-lg hover:bg-stone-50"><i className="fas fa-calendar-check mr-3 w-5 text-[#A2672D]"></i> Agendamentos</Link>
+            <Link to="/servicos" className="block p-3 rounded-lg hover:bg-stone-50"><i className="fas fa-paint-brush mr-3 w-5 text-[#A2672D]"></i> Serviços</Link>
+            <Link to="/categorias" className="block p-3 rounded-lg hover:bg-stone-50"><i className="fas fa-tags mr-3 w-5 text-[#A2672D]"></i> Categorias</Link>
+            <Link to="/produtos" className="block p-3 rounded-lg hover:bg-stone-50"><i className="fas fa-box-open mr-3 w-5 text-[#A2672D]"></i> Produtos</Link>
+            <Link to="/encomendas" className="block p-3 rounded-lg bg-stone-100 border-l-4 border-[#A2672D] font-semibold text-[#A2672D]"><i className="fas fa-shipping-fast mr-3 w-5"></i> Encomendas</Link>
+            <Link to="/equipe" className="block p-3 rounded-lg hover:bg-stone-50"><i className="fas fa-users-cog mr-3 w-5 text-[#A2672D]"></i> Equipe</Link>
           </nav>
         </div>
-
-        {/* BOTÃO LOGOUT */}
-        <button 
-          onClick={handleLogout}
-          className="
-            w-full mt-8 flex items-center p-3 rounded-lg 
-            bg-stone-800 border border-stone-700 
-            hover:bg-stone-700/60 
-            transition duration-200 font-semibold 
-            text-amber-400 text-lg
-          "
-        >
-          <i className="fas fa-sign-out-alt mr-3 w-5"></i>
-          Sair
-        </button>
+        <button onClick={handleLogout} className="w-full mt-8 flex items-center p-3 rounded-lg bg-stone-50 border border-stone-200 hover:bg-stone-100 transition font-semibold text-[#A2672D]"><i className="fas fa-sign-out-alt mr-3 w-5"></i> Sair</button>
       </aside>
-
-      {/* BACKDROP MOBILE */}
-      {sidebarOpen && (
-        <div
-          className="fixed inset-0 bg-black/50 backdrop-blur-sm md:hidden z-40"
-          onClick={() => setSidebarOpen(false)}
-        ></div>
-      )}
 
       {/* ÁREA PRINCIPAL */}
       <div className="flex-1 md:ml-64 overflow-y-auto"> 
-        {/* HEADER (Reutilizado) */}
-        <header
-          className="
-            bg-stone-900/40 backdrop-blur-xl border-b border-stone-800
-            fixed top-0 right-0 left-0 md:left-64
-            h-16 flex items-center justify-between px-4 sm:px-6 shadow-xl
-            z-30
-          "
-        >
-          {/* Botão mobile para abrir o sidebar */}
-          <button
-            className="md:hidden text-xl sm:text-2xl"
-            onClick={() => setSidebarOpen(!sidebarOpen)}
-          >
-            <i className="fas fa-bars"></i>
-          </button>
-
-          <h2 className="text-lg sm:text-xl font-light tracking-wide text-white/90">
-            Gestão de Encomendas
-          </h2>
-
-          {/* Notificações + Perfil */}
-          <div className="flex items-center gap-4 sm:gap-6">
-            <button className="relative text-xl sm:text-2xl text-amber-400 hover:text-amber-300 transition-all">
-              <i className="fas fa-bell"></i>
-              <span
-                className="
-                  absolute -top-1 -right-1 bg-red-600 text-white text-[10px]
-                  w-4 h-4 rounded-full flex items-center justify-center font-bold
-                "
-              >
-                3
-              </span>
-            </button>
-
-            <div className="flex items-center gap-3">
-              <span className="text-sm opacity-80 hidden sm:block">Admin</span>
-              <div className="w-9 h-9 sm:w-10 sm:h-10 bg-amber-600 rounded-full flex items-center justify-center">
-                <i className="fas fa-user text-white text-base"></i>
-              </div>
-            </div>
-          </div>
+        <header className="bg-white border-b border-stone-200 fixed top-0 right-0 left-0 md:left-64 h-16 flex items-center justify-between px-6 shadow-sm z-30">
+          <button className="md:hidden text-xl text-stone-600" onClick={() => setSidebarOpen(!sidebarOpen)}><i className="fas fa-bars"></i></button>
+          <h2 className="text-lg font-light text-stone-800 tracking-wide">Gestão de Encomendas</h2>
+          <div className="w-10 h-10 bg-[#A2672D] rounded-full flex items-center justify-center text-white"><i className="fas fa-user"></i></div>
         </header>
 
-        {/* CONTEÚDO PRINCIPAL: TABELA DE ENCOMENDAS */}
         <main className="mt-20 p-4 sm:p-6 space-y-8 sm:space-y-10">
-          
-          <div className="bg-stone-900/30 border border-stone-800 rounded-xl shadow-xl backdrop-blur-md p-4 sm:p-6">
-            <div className="flex justify-between items-center mb-6 flex-wrap gap-4">
-                <h3 className="text-2xl font-bold text-amber-400">Lista de Encomendas ({todasEncomendas.length})</h3>
-                <button 
-                    onClick={handleAdd}
-                    className="flex items-center gap-2 px-4 py-2 bg-amber-600 text-white font-semibold rounded-lg hover:bg-amber-700 transition-colors shadow-lg"
-                >
-                    <i className="fas fa-box-open"></i>
-                    Nova Encomenda
-                </button>
+          <div className="bg-white border border-stone-200 rounded-xl shadow-sm p-4 sm:p-6">
+            <div className="flex justify-between items-center mb-6 flex-wrap gap-4 text-stone-900">
+                <h3 className="text-2xl font-bold text-[#A2672D]">Lista de Encomendas ({todasEncomendas.length})</h3>
+                <button onClick={handleAdd} className="flex items-center gap-2 px-4 py-2 bg-[#A2672D] text-white font-semibold rounded-lg hover:opacity-90 transition shadow-lg"><i className="fas fa-box-open"></i> Nova Encomenda</button>
             </div>
 
-            {/* BARRA DE PESQUISA, FILTROS E ORDENAÇÃO */}
+            {/* FILTROS E PESQUISA */}
             <div className="flex flex-col lg:flex-row justify-start items-start lg:items-center mb-6 gap-4 flex-wrap">
-              
-              {/* Pesquisa */}
               <div className="relative w-full sm:w-auto flex-1 min-w-50">
                 <input
                   type="text"
                   placeholder="Pesquisar cliente, telefone ou ID..."
                   value={termoPesquisa}
                   onChange={(e) => setTermoPesquisa(e.target.value)}
-                  className="w-full py-2 pl-10 pr-4 bg-stone-800 border border-stone-700 rounded-lg focus:ring-amber-500 focus:border-amber-500 text-white/90 placeholder-white/50 transition-colors"
+                  className="w-full py-2 pl-10 pr-4 bg-stone-50 border border-stone-200 rounded-lg focus:ring-[#A2672D] focus:border-[#A2672D] text-stone-800 placeholder-stone-400 transition-colors"
                 />
-                <i className="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-white/50"></i>
+                <i className="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-stone-400"></i>
               </div>
 
-              {/* Filtro por Status */}
-              <select 
-                value={filtroStatus}
-                onChange={(e) => setFiltroStatus(e.target.value)}
-                className="w-full sm:w-44 py-2 px-3 bg-stone-800 border border-stone-700 rounded-lg focus:ring-amber-500 focus:border-amber-500 text-white/90 appearance-none pr-8 cursor-pointer"
-              >
+              <select value={filtroStatus} onChange={(e) => setFiltroStatus(e.target.value)} className="w-full sm:w-44 py-2 px-3 bg-stone-50 border border-stone-200 rounded-lg focus:ring-[#A2672D] text-stone-700 cursor-pointer">
                 <option value="">Status (Todos)</option>
-                {statusOpcoes.map(status => (
-                    <option key={status} value={status}>{status}</option>
-                ))}
+                {statusOpcoes.map(status => <option key={status} value={status}>{status}</option>)}
               </select>
 
-              {/* Ordenação */}
-              <select 
-                value={ordenacao}
-                onChange={(e) => setOrdenacao(e.target.value)}
-                className="w-full sm:w-44 py-2 px-3 bg-stone-800 border border-stone-700 rounded-lg focus:ring-amber-500 focus:border-amber-500 text-white/90 appearance-none pr-8 cursor-pointer"
-              >
-                <option value="data_desc">Ordenar por: Data (Recente)</option>
-                <option value="total_desc">Ordenar por: Valor (Maior)</option>
-                <option value="cliente_asc">Ordenar por: Cliente A-Z</option>
+              <select value={ordenacao} onChange={(e) => setOrdenacao(e.target.value)} className="w-full sm:w-44 py-2 px-3 bg-stone-50 border border-stone-200 rounded-lg focus:ring-[#A2672D] text-stone-700 cursor-pointer">
+                <option value="data_desc">Data (Recente)</option>
+                <option value="total_desc">Valor (Maior)</option>
+                <option value="cliente_asc">Cliente A-Z</option>
               </select>
               
-              {/* Botão de Limpar Filtros */}
               {(filtroStatus || termoPesquisa) && (
-                  <button 
-                      onClick={() => {setFiltroStatus(''); setTermoPesquisa(''); setOrdenacao('data_desc');}}
-                      className="px-3 py-2 bg-stone-700/50 rounded-lg text-white/70 hover:bg-stone-700 transition-colors"
-                  >
-                      <i className="fas fa-sync-alt mr-1"></i> Limpar
-                  </button>
+                  <button onClick={() => {setFiltroStatus(''); setTermoPesquisa(''); setOrdenacao('data_desc');}} className="px-3 py-2 bg-stone-200 rounded-lg text-stone-600 hover:bg-stone-300 transition-colors"><i className="fas fa-sync-alt mr-1"></i> Limpar</button>
               )}
             </div>
 
-            {/* TABELA START */}
+            {/* TABELA - ESTRUTURA ORIGINAL PRESERVADA */}
             <div className="overflow-x-auto">
               <table className="min-w-full w-full text-left border-collapse text-sm"> 
                 <thead>
-                  <tr className="text-amber-300 border-b border-stone-800/70">
+                  <tr className="text-[#A2672D] border-b border-stone-200">
                     <th className="p-3 whitespace-nowrap">ID</th>
                     <th className="p-3 whitespace-nowrap">Cliente</th>
                     <th className="p-3 whitespace-nowrap">Telefone</th>
@@ -331,72 +184,38 @@ export default function EncomendasAdmin() {
                 <tbody>
                   {encomendasProcessadas.length > 0 ? (
                     encomendasProcessadas.map((encomenda) => (
-                      <tr
-                        key={encomenda.id}
-                        className="border-b border-stone-800/40 hover:bg-stone-900/40 transition-colors"
-                      >
+                      <tr key={encomenda.id} className="border-b border-stone-100 hover:bg-stone-50 transition-colors text-stone-700">
                         <td className="p-3 opacity-70 whitespace-nowrap">{encomenda.id}</td>
-                        <td className="p-3 font-medium whitespace-nowrap">{encomenda.cliente}</td>
+                        <td className="p-3 font-medium whitespace-nowrap text-stone-900">{encomenda.cliente}</td>
                         <td className="p-3 whitespace-nowrap opacity-90">{encomenda.telefone}</td>
                         <td className="p-3 whitespace-nowrap opacity-70 hidden lg:table-cell text-xs">{encomenda.email}</td>
                         <td className="p-3 text-xs max-w-37.5 truncate opacity-80">{encomenda.endereco}</td>
                         <td className="p-3 whitespace-nowrap opacity-80">{encomenda.data}</td>
-                        
-                        {/* Listagem de Produtos */}
-                        <td className="p-3 text-white/70 text-xs">
-                          {encomenda.produtos.join(', ')}
-                        </td>
-                        
-                        <td className="p-3 whitespace-nowrap font-bold text-amber-300 text-right">{formatarPreco(encomenda.total)}</td>
-                        
-                        {/* Status com cor */}
+                        <td className="p-3 text-stone-500 text-xs">{encomenda.produtos.join(', ')}</td>
+                        <td className="p-3 whitespace-nowrap font-bold text-[#A2672D] text-right">{formatarPreco(encomenda.total)}</td>
                         <td className="p-3 text-center whitespace-nowrap">
                             <span className={`px-3 py-1 rounded-lg text-xs font-semibold ${getStatusClasses(encomenda.status)}`}>
                                 {encomenda.status}
                             </span>
                         </td>
-                        
-                        {/* COLUNA DE AÇÕES: Gerar PDF e Eliminar */}
                         <td className="p-3 text-center whitespace-nowrap">
                           <div className="flex justify-center space-x-3 text-base">
-                            <button 
-                              className="text-blue-400 hover:text-blue-300 transition-colors"
-                              onClick={() => handleGeneratePDF(encomenda.id)}
-                              title="Gerar PDF / Fatura"
-                            >
-                              <i className="fas fa-file-pdf"></i>
-                            </button>
-                            {/* Botão Eliminar */}
-                            <button 
-                              className="text-red-500 hover:text-red-400 transition-colors"
-                              onClick={() => handleDelete(encomenda.id, encomenda.cliente)}
-                              title="Eliminar Encomenda"
-                            >
-                              <i className="fas fa-trash-alt"></i>
-                            </button>
+                            <button className="text-blue-500 hover:text-blue-700 transition-colors" onClick={() => handleGeneratePDF(encomenda.id)} title="Gerar PDF / Fatura"><i className="fas fa-file-pdf"></i></button>
+                            <button className="text-red-500 hover:text-red-700 transition-colors" onClick={() => handleDelete(encomenda.id, encomenda.cliente)} title="Eliminar Encomenda"><i className="fas fa-trash-alt"></i></button>
                           </div>
                         </td>
                       </tr>
                     ))
                   ) : (
-                    <tr>
-                      <td colSpan="10" className="p-6 text-center text-white/60">
-                        Nenhuma encomenda encontrada com os filtros aplicados.
-                      </td>
-                    </tr>
+                    <tr><td colSpan="10" className="p-6 text-center text-stone-400">Nenhuma encomenda encontrada.</td></tr>
                   )}
                 </tbody>
               </table>
             </div>
-            {/* TABLE END */}
 
-            {/* Rodapé da Tabela */}
             <div className="flex justify-between items-center mt-6">
-              <p className="opacity-70 text-sm">
-                Total de {todasEncomendas.length} Encomendas em Sistema
-              </p>
+              <p className="text-stone-400 text-sm">Total de {todasEncomendas.length} Encomendas em Sistema</p>
             </div>
-
           </div>
         </main>
       </div>
