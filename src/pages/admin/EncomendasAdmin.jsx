@@ -107,8 +107,8 @@ export default function EncomendasAdmin() {
           </div>
 
           <nav className="space-y-4 text-lg text-stone-600">
-            <Link to="/dashboard/admin" className="block p-3 rounded-lg hover:bg-stone-50"><i className="fas fa-chart-line mr-3 w-5 text-[#A2672D]"></i> Dashboard</Link>
-            <Link to="/dashboard/agendamentos" className="block p-3 rounded-lg hover:bg-stone-50"><i className="fas fa-calendar-check mr-3 w-5 text-[#A2672D]"></i> Agendamentos</Link>
+            <Link to="/" className="block p-3 rounded-lg hover:bg-stone-50"><i className="fas fa-chart-line mr-3 w-5 text-[#A2672D]"></i> Dashboard</Link>
+            <Link to="/agendamentos" className="block p-3 rounded-lg hover:bg-stone-50"><i className="fas fa-calendar-check mr-3 w-5 text-[#A2672D]"></i> Agendamentos</Link>
             <Link to="/servicos" className="block p-3 rounded-lg hover:bg-stone-50"><i className="fas fa-paint-brush mr-3 w-5 text-[#A2672D]"></i> Serviços</Link>
             <Link to="/categorias" className="block p-3 rounded-lg hover:bg-stone-50"><i className="fas fa-tags mr-3 w-5 text-[#A2672D]"></i> Categorias</Link>
             <Link to="/produtos" className="block p-3 rounded-lg hover:bg-stone-50"><i className="fas fa-box-open mr-3 w-5 text-[#A2672D]"></i> Produtos</Link>

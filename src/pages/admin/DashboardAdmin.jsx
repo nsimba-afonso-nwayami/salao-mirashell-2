@@ -80,7 +80,7 @@ export default function DashboardAdmin() {
           {/* MENU PRINCIPAL */}
           <nav className="space-y-4 text-lg">
             <Link 
-              to="/dashboard/admin" 
+              to="/" 
               className="block p-3 rounded-lg bg-stone-100 border-l-4 border-[#A2672D] font-semibold text-[#A2672D]"
             >
               <i className="fas fa-chart-line mr-3 w-5"></i>
@@ -88,7 +88,7 @@ export default function DashboardAdmin() {
             </Link>
 
             <Link 
-              to="/dashboard/admin/agendamentos/" 
+              to="/agendamentos/" 
               className="block p-3 rounded-lg hover:bg-stone-50 cursor-pointer text-stone-600 hover:text-[#A2672D] transition-colors"
             >
               <i className="fas fa-calendar-check mr-3 w-5 text-[#A2672D]"></i>
@@ -96,7 +96,7 @@ export default function DashboardAdmin() {
             </Link>
 
             <Link 
-              to="/dashboard/admin/servicos" 
+              to="/servicos" 
               className="block p-3 rounded-lg hover:bg-stone-50 cursor-pointer text-stone-600 hover:text-[#A2672D] transition-colors"
             >
               <i className="fas fa-paint-brush mr-3 w-5 text-[#A2672D]"></i>
@@ -104,7 +104,7 @@ export default function DashboardAdmin() {
             </Link>
 
             <Link 
-              to="/dashboard/admin/categorias" 
+              to="/categorias" 
               className="block p-3 rounded-lg hover:bg-stone-50 cursor-pointer text-stone-600 hover:text-[#A2672D] transition-colors"
             >
               <i className="fas fa-tags mr-3 w-5 text-[#A2672D]"></i>
@@ -112,7 +112,7 @@ export default function DashboardAdmin() {
             </Link>
 
             <Link 
-              to="/dashboard/admin/produtos" 
+              to="/produtos" 
               className="block p-3 rounded-lg hover:bg-stone-50 cursor-pointer text-stone-600 hover:text-[#A2672D] transition-colors"
             >
               <i className="fas fa-box-open mr-3 w-5 text-[#A2672D]"></i>
@@ -120,7 +120,7 @@ export default function DashboardAdmin() {
             </Link>
 
             <Link 
-              to="/dashboard/admin/encomendas" 
+              to="/encomendas" 
               className="block p-3 rounded-lg hover:bg-stone-50 cursor-pointer text-stone-600 hover:text-[#A2672D] transition-colors"
             >
               <i className="fas fa-shipping-fast mr-3 w-5 text-[#A2672D]"></i>
@@ -128,7 +128,7 @@ export default function DashboardAdmin() {
             </Link>
 
             <Link 
-              to="/dashboard/admin/equipe" 
+              to="/equipe" 
               className="block p-3 rounded-lg hover:bg-stone-50 cursor-pointer text-stone-600 hover:text-[#A2672D] transition-colors"
             >
               <i className="fas fa-users-cog mr-3 w-5 text-[#A2672D]"></i>
