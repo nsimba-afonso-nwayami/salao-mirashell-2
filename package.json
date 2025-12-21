@@ -11,9 +11,13 @@
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.1.18",
+    "framer-motion": "^12.23.26",
+    "lightgallery": "^2.9.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
+    "react-hot-toast": "^2.6.0",
     "react-router-dom": "^7.10.1",
+    "react-router-hash-link": "^2.4.3",
     "tailwindcss": "^4.1.18"
   },
   "devDependencies": {
