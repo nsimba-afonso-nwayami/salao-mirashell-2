@@ -22,8 +22,8 @@ export default function AppRoutes () {
     return (
         <Routes>
             {/*Rotas do site */}
-            {/*<Route path="/" element={<Home />} />
-            <Route path="*" element={<NotFound />} />*/}
+            <Route path="/" element={<Home />} />
+            <Route path="*" element={<NotFound />} />
 
             {/*Rotas de autenticação */}
             <Route path="/auth/login" element={<Login />} />
@@ -31,7 +31,7 @@ export default function AppRoutes () {
             <Route path="/auth/esqueci-senha" element={<ForgotPassword />} />
 
             {/*Rotas do admin */}
-            <Route path="/">
+            <Route path="/dashboard/admin">
                 <Route path="" element={<DashboardAdmin />} />
                 <Route path="agendamentos" element={<AgendamentosAdmin />} />
                 <Route path="servicos" element={<ServicosAdmin />} />
