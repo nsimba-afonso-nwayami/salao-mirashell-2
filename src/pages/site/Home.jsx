@@ -82,19 +82,38 @@ export default function Home() {
               Somos um salão elegante
             </h3>
             <p className="text-gray-700 leading-relaxed">
-              Somos um salão dedicado a realçar a sua beleza com serviços profissionais, técnicas modernas e um atendimento focado em resultados naturais, seguros e de qualidade. Aqui, cada detalhe importa para que você se sinta confiante e valorizada.
+              Somos um salão dedicado a realçar a sua beleza com serviços
+              profissionais, técnicas modernas e um atendimento focado em
+              resultados naturais, seguros e de qualidade. Aqui, cada detalhe
+              importa para que você se sinta confiante e valorizada.
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mt-4 w-full">
               <div className="flex flex-col items-center text-center gap-2">
-                <img src={AboutIconImg1} alt="Ferramentas Profissionais" className="h-16 w-16 object-contain" />
-                <h3 className="font-medium text-[#A2672D]">Ferramentas Profissionais</h3>
+                <img
+                  src={AboutIconImg1}
+                  alt="Ferramentas Profissionais"
+                  className="h-16 w-16 object-contain"
+                />
+                <h3 className="font-medium text-[#A2672D]">
+                  Ferramentas Profissionais
+                </h3>
               </div>
               <div className="flex flex-col items-center text-center gap-2">
-                <img src={AboutIconImg2} alt="Equipamentos de Qualidade" className="h-16 w-16 object-contain" />
-                <h3 className="font-medium text-[#A2672D]">Equipamentos de Qualidade</h3>
+                <img
+                  src={AboutIconImg2}
+                  alt="Equipamentos de Qualidade"
+                  className="h-16 w-16 object-contain"
+                />
+                <h3 className="font-medium text-[#A2672D]">
+                  Equipamentos de Qualidade
+                </h3>
               </div>
               <div className="flex flex-col items-center text-center gap-2">
-                <img src={AboutIconImg3} alt="Cabelo Desejado" className="h-16 w-16 object-contain" />
+                <img
+                  src={AboutIconImg3}
+                  alt="Cabelo Desejado"
+                  className="h-16 w-16 object-contain"
+                />
                 <h3 className="font-medium text-[#A2672D]">Cabelo Desejado</h3>
               </div>
             </div>
@@ -111,14 +130,22 @@ export default function Home() {
           {/* Serviço 1 */}
           <div className="flex flex-col md:flex-row items-stretch mb-12 rounded-lg shadow-lg overflow-hidden w-full">
             <div className="flex-1 w-full overflow-hidden">
-              <img src={ServiceHair} alt="Cabeleireiro" className="w-full h-full object-cover md:rounded-l-lg rounded-t-lg transform transition-transform duration-300 hover:scale-90" />
+              <img
+                src={ServiceHair}
+                alt="Cabeleireiro"
+                className="w-full h-full object-cover md:rounded-l-lg rounded-t-lg transform transition-transform duration-300 hover:scale-90"
+              />
             </div>
             <div className="flex-1 w-full bg-[#2a201c] text-white p-8 md:p-[6rem_2rem] flex flex-col justify-center items-center text-center md:text-left">
               <h3 className="text-3xl md:text-4xl mb-4">Cabeleireiro</h3>
               <p className="text-base md:text-lg leading-relaxed">
-                Serviços profissionais para realçar sua beleza e estilo de forma única.
+                Serviços profissionais para realçar sua beleza e estilo de forma
+                única.
               </p>
-              <Link to="/cabeleireiro" className="mt-6 inline-block bg-[#A2672D] text-white font-semibold px-6 py-3 rounded-md shadow hover:bg-[#5a4d3e] hover:scale-105 hover:shadow-xl transition-all duration-300 text-center">
+              <Link
+                to="/cabeleireiro"
+                className="mt-6 inline-block bg-[#A2672D] text-white font-semibold px-6 py-3 rounded-md shadow hover:bg-[#5a4d3e] hover:scale-105 hover:shadow-xl transition-all duration-300 text-center"
+              >
                 Ver mais
               </Link>
             </div>
@@ -127,14 +154,22 @@ export default function Home() {
           {/* Serviço 2 */}
           <div className="flex flex-col md:flex-row items-stretch mb-12 rounded-lg shadow-lg overflow-hidden w-full">
             <div className="flex-1 w-full overflow-hidden">
-              <img src={ServicoPeruca} alt="Extensões e Perucas" className="w-full h-full object-cover md:rounded-l-lg rounded-t-lg transform transition-transform duration-300 hover:scale-90" />
+              <img
+                src={ServicoPeruca}
+                alt="Extensões e Perucas"
+                className="w-full h-full object-cover md:rounded-l-lg rounded-t-lg transform transition-transform duration-300 hover:scale-90"
+              />
             </div>
             <div className="flex-1 w-full bg-[#2a201c] text-white p-8 md:p-[6rem_2rem] flex flex-col justify-center items-center text-center md:text-left">
               <h3 className="text-3xl md:text-4xl mb-4">Extensões e Perucas</h3>
               <p className="text-base md:text-lg leading-relaxed">
-                Extensões e perucas de alta qualidade para transformar seu visual.
+                Extensões e perucas de alta qualidade para transformar seu
+                visual.
               </p>
-              <Link to="/service-perucas" className="mt-6 inline-block bg-[#A2672D] text-white font-semibold px-6 py-3 rounded-md shadow hover:bg-[#5a4d3e] hover:scale-105 hover:shadow-xl transition-all duration-300 text-center">
+              <Link
+                to="/service-perucas"
+                className="mt-6 inline-block bg-[#A2672D] text-white font-semibold px-6 py-3 rounded-md shadow hover:bg-[#5a4d3e] hover:scale-105 hover:shadow-xl transition-all duration-300 text-center"
+              >
                 Ver mais
               </Link>
             </div>
@@ -143,14 +178,22 @@ export default function Home() {
           {/* Serviço 3 */}
           <div className="flex flex-col md:flex-row items-stretch mb-12 rounded-lg shadow-lg overflow-hidden w-full">
             <div className="flex-1 w-full overflow-hidden">
-              <img src={ServicoTrancas} alt="Tranças e Penteados" className="w-full h-full object-cover md:rounded-l-lg rounded-t-lg transform transition-transform duration-300 hover:scale-90" />
+              <img
+                src={ServicoTrancas}
+                alt="Tranças e Penteados"
+                className="w-full h-full object-cover md:rounded-l-lg rounded-t-lg transform transition-transform duration-300 hover:scale-90"
+              />
             </div>
             <div className="flex-1 w-full bg-[#2a201c] text-white p-8 md:p-[6rem_2rem] flex flex-col justify-center items-center text-center md:text-left">
               <h3 className="text-3xl md:text-4xl mb-4">Tranças e Penteados</h3>
               <p className="text-base md:text-lg leading-relaxed">
-                Penteados elegantes e tranças personalizadas para todas as ocasiões.
+                Penteados elegantes e tranças personalizadas para todas as
+                ocasiões.
               </p>
-              <Link to="/service-trancas" className="mt-6 inline-block bg-[#A2672D] text-white font-semibold px-6 py-3 rounded-md shadow hover:bg-[#5a4d3e] hover:scale-105 hover:shadow-xl transition-all duration-300 text-center">
+              <Link
+                to="/service-trancas"
+                className="mt-6 inline-block bg-[#A2672D] text-white font-semibold px-6 py-3 rounded-md shadow hover:bg-[#5a4d3e] hover:scale-105 hover:shadow-xl transition-all duration-300 text-center"
+              >
                 Ver mais
               </Link>
             </div>
@@ -159,14 +202,22 @@ export default function Home() {
           {/* Serviço 4 */}
           <div className="flex flex-col md:flex-row items-stretch mb-12 rounded-lg shadow-lg overflow-hidden w-full">
             <div className="flex-1 w-full overflow-hidden">
-              <img src={ServicoEstetica} alt="Estética" className="w-full h-full object-cover md:rounded-l-lg rounded-t-lg transform transition-transform duration-300 hover:scale-90" />
+              <img
+                src={ServicoEstetica}
+                alt="Estética"
+                className="w-full h-full object-cover md:rounded-l-lg rounded-t-lg transform transition-transform duration-300 hover:scale-90"
+              />
             </div>
             <div className="flex-1 w-full bg-[#2a201c] text-white p-8 md:p-[6rem_2rem] flex flex-col justify-center items-center text-center md:text-left">
               <h3 className="text-3xl md:text-4xl mb-4">Estética</h3>
               <p className="text-base md:text-lg leading-relaxed">
-                Tratamentos estéticos de qualidade para cuidado completo da sua beleza.
+                Tratamentos estéticos de qualidade para cuidado completo da sua
+                beleza.
               </p>
-              <Link to="/service-estetica" className="mt-6 inline-block bg-[#A2672D] text-white font-semibold px-6 py-3 rounded-md shadow hover:bg-[#5a4d3e] hover:scale-105 hover:shadow-xl transition-all duration-300 text-center">
+              <Link
+                to="/service-estetica"
+                className="mt-6 inline-block bg-[#A2672D] text-white font-semibold px-6 py-3 rounded-md shadow hover:bg-[#5a4d3e] hover:scale-105 hover:shadow-xl transition-all duration-300 text-center"
+              >
                 Ver mais
               </Link>
             </div>
@@ -187,40 +238,82 @@ export default function Home() {
         <LightGallery
           speed={500}
           plugins={[lgThumbnail, lgZoom]}
-          elementClassNames="grid gap-8 grid-cols-[repeat(auto-fit,minmax(25rem,1fr))]"
+          elementClassNames="grid gap-8 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3"
         >
-          <a href={GaleriaImg1} className="relative h-72 overflow-hidden group w-full">
-            <img src={GaleriaImg1} alt="Galeria 1" className="w-full h-full object-cover transform transition-transform duration-500 group-hover:scale-110" />
+          <a
+            href={GaleriaImg1}
+            className="relative h-72 overflow-hidden group w-full"
+          >
+            <img
+              src={GaleriaImg1}
+              alt="Galeria 1"
+              className="w-full h-full object-cover transform transition-transform duration-500 group-hover:scale-110"
+            />
             <div className="absolute inset-0 bg-black/70 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
               <i className="fas fa-plus text-white text-[6rem]"></i>
             </div>
           </a>
-          <a href={GaleriaImg2} className="relative h-72 overflow-hidden group w-full">
-            <img src={GaleriaImg2} alt="Galeria 2" className="w-full h-full object-cover transform transition-transform duration-500 group-hover:scale-110" />
+          <a
+            href={GaleriaImg2}
+            className="relative h-72 overflow-hidden group w-full"
+          >
+            <img
+              src={GaleriaImg2}
+              alt="Galeria 2"
+              className="w-full h-full object-cover transform transition-transform duration-500 group-hover:scale-110"
+            />
             <div className="absolute inset-0 bg-black/70 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
               <i className="fas fa-plus text-white text-[6rem]"></i>
             </div>
           </a>
-          <a href={GaleriaImg3} className="relative h-72 overflow-hidden group w-full">
-            <img src={GaleriaImg3} alt="Galeria 3" className="w-full h-full object-cover transform transition-transform duration-500 group-hover:scale-110" />
+          <a
+            href={GaleriaImg3}
+            className="relative h-72 overflow-hidden group w-full"
+          >
+            <img
+              src={GaleriaImg3}
+              alt="Galeria 3"
+              className="w-full h-full object-cover transform transition-transform duration-500 group-hover:scale-110"
+            />
             <div className="absolute inset-0 bg-black/70 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
               <i className="fas fa-plus text-white text-[6rem]"></i>
             </div>
           </a>
-          <a href={GaleriaImg4} className="relative h-72 overflow-hidden group w-full">
-            <img src={GaleriaImg4} alt="Galeria 4" className="w-full h-full object-cover transform transition-transform duration-500 group-hover:scale-110" />
+          <a
+            href={GaleriaImg4}
+            className="relative h-72 overflow-hidden group w-full"
+          >
+            <img
+              src={GaleriaImg4}
+              alt="Galeria 4"
+              className="w-full h-full object-cover transform transition-transform duration-500 group-hover:scale-110"
+            />
             <div className="absolute inset-0 bg-black/70 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
               <i className="fas fa-plus text-white text-[6rem]"></i>
             </div>
           </a>
-          <a href={GaleriaImg5} className="relative h-72 overflow-hidden group w-full">
-            <img src={GaleriaImg5} alt="Galeria 5" className="w-full h-full object-cover transform transition-transform duration-500 group-hover:scale-110" />
+          <a
+            href={GaleriaImg5}
+            className="relative h-72 overflow-hidden group w-full"
+          >
+            <img
+              src={GaleriaImg5}
+              alt="Galeria 5"
+              className="w-full h-full object-cover transform transition-transform duration-500 group-hover:scale-110"
+            />
             <div className="absolute inset-0 bg-black/70 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
               <i className="fas fa-plus text-white text-[6rem]"></i>
             </div>
           </a>
-          <a href={GaleriaImg6} className="relative h-72 overflow-hidden group w-full">
-            <img src={GaleriaImg6} alt="Galeria 6" className="w-full h-full object-cover transform transition-transform duration-500 group-hover:scale-110" />
+          <a
+            href={GaleriaImg6}
+            className="relative h-72 overflow-hidden group w-full"
+          >
+            <img
+              src={GaleriaImg6}
+              alt="Galeria 6"
+              className="w-full h-full object-cover transform transition-transform duration-500 group-hover:scale-110"
+            />
             <div className="absolute inset-0 bg-black/70 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
               <i className="fas fa-plus text-white text-[6rem]"></i>
             </div>
@@ -239,17 +332,35 @@ export default function Home() {
           Fale Conosco
         </h1>
         <div className="relative z-10 flex flex-col md:flex-row flex-wrap w-full max-w-7xl mx-auto gap-8 px-4 md:px-8 justify-center">
-          <form className="flex-1 min-w-160 border border-[#A2672D] p-8 md:p-10 flex flex-col w-full">
+          <form className="flex-1 w-full md:min-w-160 border border-[#A2672D] p-8 md:p-10 flex flex-col">
             <h3 className="text-2xl md:text-3xl text-center text-[#A2672D] pb-4 uppercase">
               Preencha e Envie o Formulário
             </h3>
             <div className="flex flex-col gap-6 mt-8 mb-8 w-full">
-              <input type="text" placeholder="Seu nome" className="w-full px-3 py-3 text-black text-lg border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#A2672D] bg-white" />
-              <input type="email" placeholder="exemplo@gmail.com" className="w-full px-3 py-3 text-black text-lg border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#A2672D] bg-white" />
-              <input type="text" placeholder="Seu assunto" className="w-full px-3 py-3 text-black text-lg border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#A2672D] bg-white" />
-              <textarea placeholder="Sua mensagem" className="w-full px-3 py-3 text-black text-lg border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#A2672D] resize-none bg-white h-37.5" />
+              <input
+                type="text"
+                placeholder="Seu nome"
+                className="w-full px-3 py-3 text-black text-lg border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#A2672D] bg-white"
+              />
+              <input
+                type="email"
+                placeholder="exemplo@gmail.com"
+                className="w-full px-3 py-3 text-black text-lg border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#A2672D] bg-white"
+              />
+              <input
+                type="text"
+                placeholder="Seu assunto"
+                className="w-full px-3 py-3 text-black text-lg border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#A2672D] bg-white"
+              />
+              <textarea
+                placeholder="Sua mensagem"
+                className="w-full px-3 py-3 text-black text-lg border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#A2672D] resize-none bg-white h-37.5"
+              />
             </div>
-            <button type="button" className="w-full cursor-pointer bg-[#A2672D] text-white font-semibold px-6 py-3 rounded-md shadow hover:bg-[#5a4d3e] hover:scale-105 hover:shadow-xl transition-all duration-300">
+            <button
+              type="button"
+              className="w-full cursor-pointer bg-[#A2672D] text-white font-semibold px-6 py-3 rounded-md shadow hover:bg-[#5a4d3e] hover:scale-105 hover:shadow-xl transition-all duration-300"
+            >
               Enviar Mensagem
             </button>
           </form>
