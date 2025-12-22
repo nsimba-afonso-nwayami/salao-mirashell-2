@@ -239,7 +239,7 @@ export default function Encomendar() {
 
             <button
               type="submit"
-              className="w-full bg-[#A2672D] text-white font-semibold px-6 py-3 rounded-md shadow hover:bg-[#5a4d3e] hover:scale-105 transition-all duration-300"
+              className="w-full cursor-pointer bg-[#A2672D] text-white font-semibold px-6 py-3 rounded-md shadow hover:bg-[#5a4d3e] hover:scale-105 transition-all duration-300"
             >
               Confirmar Encomenda
             </button>
@@ -247,7 +247,7 @@ export default function Encomendar() {
             <button
               type="button"
               onClick={enviarWhatsApp}
-              className="w-full mt-4 bg-[#25D366] text-white font-semibold px-6 py-3 rounded-md shadow hover:scale-105 transition-all duration-300"
+              className="w-full cursor-pointer mt-4 bg-[#25D366] text-white font-semibold px-6 py-3 rounded-md shadow hover:scale-105 transition-all duration-300"
             >
               Encomendar pelo WhatsApp
             </button>
