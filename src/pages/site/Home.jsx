@@ -324,7 +324,7 @@ export default function Home() {
       {/* Fale Conosco */}
       <section
         className="visit relative py-20 bg-cover bg-center w-full"
-        id="fale-conosco"
+        id="fale-connosco"
         style={{ backgroundImage: `url(${VisitBg})` }}
       >
         <div className="absolute inset-0 bg-black/50" />

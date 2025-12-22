@@ -57,7 +57,7 @@ export default function Header() {
             Loja
           </Link>
 
-          <HashLink smooth to="/#fale-conosco" className={linkClasses}>
+          <HashLink smooth to="/#fale-connosco" className={linkClasses}>
             Fale Connosco
           </HashLink>
         </nav>
