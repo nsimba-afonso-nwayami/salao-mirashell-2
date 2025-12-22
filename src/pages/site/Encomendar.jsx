@@ -66,6 +66,18 @@ export default function Encomendar() {
       }
 
       toast.success("Pedido enviado com sucesso!", { id: loadingToast });
+
+      // Limpar formulário após envio bem-sucedido
+      setFormData({
+        nome_cliente: "",
+        telefone: "",
+        email: "",
+        endereco: "",
+        cidade: "",
+        provincia: "",
+        quantidade: 1,
+      });
+
     } catch {
       toast.error("Erro ao enviar pedido.", { id: loadingToast });
     }
