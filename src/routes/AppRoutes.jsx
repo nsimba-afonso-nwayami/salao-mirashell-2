@@ -1,6 +1,9 @@
 import { Routes, Route } from "react-router-dom";
 //Site
 import Home from "../pages/site/Home";
+import Agendar from "../pages/site/Agendar";
+import Loja from "../pages/site/Loja";
+import Encomendar from "../pages/site/Encomendar";
 import NotFound from "../pages/site/NotFound";
 
 //Autenticação
@@ -23,6 +26,9 @@ export default function AppRoutes () {
         <Routes>
             {/*Rotas do site */}
             <Route path="/" element={<Home />} />
+            <Route path="/agendar" element={<Agendar />} />
+            <Route path="/loja" element={<Loja />} />
+            <Route path="/loja/encomendar" element={<Encomendar />} />
             <Route path="*" element={<NotFound />} />
 
             {/*Rotas de autenticação */}
