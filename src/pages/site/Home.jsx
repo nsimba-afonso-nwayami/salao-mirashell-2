@@ -143,7 +143,7 @@ export default function Home() {
                 única.
               </p>
               <Link
-                to="/cabeleireiro"
+                to="/servico/cabeleireiro"
                 className="mt-6 inline-block bg-[#A2672D] text-white font-semibold px-6 py-3 rounded-md shadow hover:bg-[#5a4d3e] hover:scale-105 hover:shadow-xl transition-all duration-300 text-center"
               >
                 Ver mais
@@ -167,7 +167,7 @@ export default function Home() {
                 visual.
               </p>
               <Link
-                to="/service-perucas"
+                to="/servico/perucas"
                 className="mt-6 inline-block bg-[#A2672D] text-white font-semibold px-6 py-3 rounded-md shadow hover:bg-[#5a4d3e] hover:scale-105 hover:shadow-xl transition-all duration-300 text-center"
               >
                 Ver mais
@@ -191,7 +191,7 @@ export default function Home() {
                 ocasiões.
               </p>
               <Link
-                to="/service-trancas"
+                to="/servico/trancas"
                 className="mt-6 inline-block bg-[#A2672D] text-white font-semibold px-6 py-3 rounded-md shadow hover:bg-[#5a4d3e] hover:scale-105 hover:shadow-xl transition-all duration-300 text-center"
               >
                 Ver mais
@@ -215,7 +215,7 @@ export default function Home() {
                 beleza.
               </p>
               <Link
-                to="/service-estetica"
+                to="/servico/estetica"
                 className="mt-6 inline-block bg-[#A2672D] text-white font-semibold px-6 py-3 rounded-md shadow hover:bg-[#5a4d3e] hover:scale-105 hover:shadow-xl transition-all duration-300 text-center"
               >
                 Ver mais
