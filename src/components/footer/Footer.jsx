@@ -63,7 +63,7 @@ export default function Footer() {
           </Link>
           <HashLink
             smooth
-            to="/#mapa"
+            to="/#localizacao"
             className="block text-base md:text-lg py-1 transition-all duration-300 hover:pl-3"
           >
             <i className="fas fa-map-marker-alt pr-2"></i> Kilamba, T22 8° andar

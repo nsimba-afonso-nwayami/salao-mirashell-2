@@ -368,7 +368,7 @@ export default function Home() {
       </section>
 
       {/* Mapa */}
-      <section id="mapa" className="mapa w-full m-0 p-0">
+      <section id="localizacao" className="mapa w-full m-0 p-0">
         <iframe
           src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3940.743137128324!2d13.276269174142003!3d-8.995766992618421!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x1a521fc061ae9735%3A0xa2241449a10c02b3!2sMirashell%20-%20Sal%C3%A3o%20de%20beleza!5e0!3m2!1spt-PT!2sao!4v1766308188636!5m2!1spt-PT!2sao"
           className="w-full h-100 border-0"
