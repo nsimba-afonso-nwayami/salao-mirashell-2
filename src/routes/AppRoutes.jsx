@@ -4,6 +4,10 @@ import Home from "../pages/site/Home";
 import Agendar from "../pages/site/Agendar";
 import Loja from "../pages/site/Loja";
 import Encomendar from "../pages/site/Encomendar";
+import ServicoCabeleireiro from "../pages/site/ServicoCabeleireiro";
+import ServicoPerucas from "../pages/site/ServicoPerucas";
+import ServicoTrancas from "../pages/site/ServicoTrancas";
+import ServicoEstetica from "../pages/site/ServicoEstetica";
 import NotFound from "../pages/site/NotFound";
 
 //Autenticação
@@ -29,6 +33,10 @@ export default function AppRoutes () {
             <Route path="/agendar" element={<Agendar />} />
             <Route path="/loja" element={<Loja />} />
             <Route path="/loja/encomendar" element={<Encomendar />} />
+            <Route path="/servico/cabeleireiro" element={<ServicoCabeleireiro />} />
+            <Route path="/servico/perucas" element={<ServicoPerucas />} />
+            <Route path="/servico/trancas" element={<ServicoTrancas />} />
+            <Route path="/servico/estetica" element={<ServicoEstetica />} />
             <Route path="*" element={<NotFound />} />
 
             {/*Rotas de autenticação */}
