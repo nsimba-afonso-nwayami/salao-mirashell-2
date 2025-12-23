@@ -1,6 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom"; 
-// Importação do logo conforme o padrão que você definiu
 import logoImg from "../../assets/img/LOGO.png";
 
 export default function AgendamentosAdmin() {
@@ -10,27 +9,72 @@ export default function AgendamentosAdmin() {
   const [dataSelecionada, setDataSelecionada] = useState("");
   const [termoPesquisa, setTermoPesquisa] = useState("");
 
-  // DADOS FICTÍCIOS DE AGENDAMENTOS (MANTIDOS)
-  const todosAgendamentos = [
-    { id: 201, nomeCliente: "Esmeralda Mendes", servico: "Unhas de Gel", data: "2025-12-16", hora: "09:00", profissional: "Sofia", status: "Confirmado" },
-    { id: 202, nomeCliente: "Adilson Ngola", servico: "Corte Masculino", data: "2025-12-16", hora: "10:00", profissional: "Pedro", status: "Confirmado" },
-    { id: 203, nomeCliente: "Inês da Rocha", servico: "Relaxamento", data: "2025-12-17", hora: "14:30", profissional: "Sofia", status: "Pendente" },
-    { id: 204, nomeCliente: "Mário João", servico: "Barba e Limpeza", data: "2025-12-17", hora: "16:00", profissional: "Pedro", status: "Cancelado" },
-    { id: 205, nomeCliente: "Vitória Gouveia", servico: "Extensão Capilar", data: "2025-12-18", hora: "11:00", profissional: "Ana", status: "Concluído" },
-    { id: 206, nomeCliente: "Luís Pereira", servico: "Massagem Terapêutica", data: "2025-12-18", hora: "13:30", profissional: "Ana", status: "Confirmado" },
-    { id: 207, nomeCliente: "Carla Pires", servico: "Pintura + Secagem", data: "2025-12-19", hora: "15:30", profissional: "Sofia", status: "Pendente" },
-  ];
+  // ===============================
+  // STATE (SUBSTITUI DADOS FICTÍCIOS)
+  // ===============================
+  const [todosAgendamentos, setTodosAgendamentos] = useState([]);
 
-  // LOGICA DE FILTRAGEM (MANTIDA)
+  const token = localStorage.getItem("token");
+
+  // ===============================
+  // CONSUMO DA API
+  // ===============================
+  useEffect(() => {
+    const fetchAgendamentos = async () => {
+      try {
+        const headers = {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        };
+
+        const res = await fetch(
+          "https://api2.nwayami.com/api/agendamentos/",
+          { headers }
+        );
+
+        const data = await res.json();
+
+        // 🔄 normalização mínima para manter seu JSX igual
+        const agendamentosFormatados = data.map((a) => ({
+          id: a.id,
+          nomeCliente: a.nome,
+          servico: a.servico_nome,
+          data: a.data,
+          hora: a.hora,
+          profissional: a.profissional_nome,
+          status: a.status,
+        }));
+
+        setTodosAgendamentos(agendamentosFormatados);
+      } catch (error) {
+        console.error("Erro ao consumir agendamentos:", error);
+      }
+    };
+
+    fetchAgendamentos();
+  }, [token]);
+
+  // ===============================
+  // FILTROS (INALTERADOS)
+  // ===============================
   const agendamentosFiltrados = todosAgendamentos.filter(agendamento => {
-    const buscaMatch = termoPesquisa.toLowerCase() === '' || 
-                       agendamento.nomeCliente.toLowerCase().includes(termoPesquisa.toLowerCase()) || 
-                       agendamento.servico.toLowerCase().includes(termoPesquisa.toLowerCase());
-    const statusMatch = filtroStatus === '' || agendamento.status === filtroStatus;
-    const dataMatch = dataSelecionada === '' || agendamento.data === dataSelecionada;
+    const buscaMatch =
+      termoPesquisa === "" ||
+      agendamento.nomeCliente.toLowerCase().includes(termoPesquisa.toLowerCase()) ||
+      agendamento.servico.toLowerCase().includes(termoPesquisa.toLowerCase());
+
+    const statusMatch =
+      filtroStatus === "" || agendamento.status === filtroStatus;
+
+    const dataMatch =
+      dataSelecionada === "" || agendamento.data === dataSelecionada;
+
     return buscaMatch && statusMatch && dataMatch;
   });
 
+  // ===============================
+  // FUNÇÕES EXISTENTES (INALTERADAS)
+  // ===============================
   const handleEdit = (id) => alert(`Ação: Editar Agendamento ${id}`);
   const handleDelete = (id) => {
     if (window.confirm(`Tem certeza que deseja eliminar o agendamento ${id}?`)) {
@@ -39,8 +83,7 @@ export default function AgendamentosAdmin() {
   };
   const handleAdd = () => alert("Ação: Abrir formulário para Novo Agendamento");
   const handleLogout = () => alert("Ação: Logout Realizado!");
-  
-  // Mapeamento de status para o seu novo padrão de cores
+
   const getStatusClasses = (status) => {
     switch (status) {
       case 'Confirmado': return 'bg-green-100 text-green-700';
@@ -50,6 +93,10 @@ export default function AgendamentosAdmin() {
       default: return 'bg-stone-100 text-stone-700';
     }
   };
+
+  // ===============================
+  // JSX (IGUAL AO SEU)
+  // ===============================
 
   return (
     <div className="min-h-screen bg-stone-50 text-stone-800 flex">

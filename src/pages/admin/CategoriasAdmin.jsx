@@ -1,30 +1,68 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom"; 
-// Importação do logo conforme o padrão Mirashell
 import logoImg from "../../assets/img/LOGO.png";
 
 export default function CategoriasAdmin() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [termoPesquisa, setTermoPesquisa] = useState("");
 
-  // DADOS FICTÍCIOS DE CATEGORIAS (Mantidos)
-  const todasCategorias = [
-    { id: 10, nome: "Cabelo", descricao: "Serviços de corte, styling e tratamentos capilares.", servicosAssociados: 7, ativo: true },
-    { id: 20, nome: "Unhas", descricao: "Manicure, pedicure e alongamento de unhas.", servicosAssociados: 4, ativo: true },
-    { id: 30, nome: "Estética Facial", descricao: "Limpeza de pele, massagens faciais e sobrancelhas.", servicosAssociados: 3, ativo: true },
-    { id: 40, nome: "Estética Corporal", descricao: "Massagens corporais e tratamentos de emagrecimento.", servicosAssociados: 2, ativo: true },
-    { id: 50, nome: "Produtos", descricao: "Produtos para venda (shampoos, cremes, esmaltes).", servicosAssociados: 0, ativo: false },
-  ];
-  
-  // LÓGICA DE FILTRAGEM (Mantida)
+  // ===============================
+  // STATE (SUBSTITUI DADOS FICTÍCIOS)
+  // ===============================
+  const [todasCategorias, setTodasCategorias] = useState([]);
+
+  const token = localStorage.getItem("token");
+
+  // ===============================
+  // CONSUMO DA API
+  // ===============================
+  useEffect(() => {
+    const fetchCategorias = async () => {
+      try {
+        const headers = {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        };
+
+        const res = await fetch(
+          "https://api2.nwayami.com/api/categorias/",
+          { headers }
+        );
+
+        const data = await res.json();
+
+        // normalização mínima (mantém JSX igual)
+        const categoriasFormatadas = data.map((c) => ({
+          id: c.id,
+          nome: c.nome,
+          descricao: c.descricao,
+          ativo: c.ativo,
+        }));
+
+        setTodasCategorias(categoriasFormatadas);
+      } catch (error) {
+        console.error("Erro ao consumir categorias:", error);
+      }
+    };
+
+    fetchCategorias();
+  }, [token]);
+
+  // ===============================
+  // FILTRO (INALTERADO)
+  // ===============================
   const categoriasProcessadas = todasCategorias.filter(categoria => {
     const termo = termoPesquisa.toLowerCase();
-    return termo === '' || 
-           categoria.nome.toLowerCase().includes(termo) || 
-           categoria.descricao.toLowerCase().includes(termo);
+    return (
+      termo === '' ||
+      categoria.nome.toLowerCase().includes(termo) ||
+      (categoria.descricao || '').toLowerCase().includes(termo)
+    );
   });
 
-  // Funções de Ação (Mantidas)
+  // ===============================
+  // FUNÇÕES EXISTENTES (INALTERADAS)
+  // ===============================
   const handleEdit = (id) => alert(`Ação: Editar Categoria ${id}`);
   const handleDelete = (id, nome) => {
     if (window.confirm(`Tem certeza que deseja ELIMINAR a categoria "${nome}"? Esta ação é IRREVERSÍVEL.`)) {
@@ -33,6 +71,10 @@ export default function CategoriasAdmin() {
   };
   const handleAdd = () => alert("Ação: Abrir formulário para Nova Categoria");
   const handleLogout = () => alert("Ação: Logout Realizado!");
+
+  // ===============================
+  // JSX (IGUAL AO SEU)
+  // ===============================
 
   return (
     <div className="min-h-screen bg-stone-50 text-stone-800 flex">

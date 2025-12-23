@@ -1,32 +1,85 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom"; 
 import logoImg from "../../assets/img/LOGO.png";
 
 export default function DashboardAdmin() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  // DADOS FICTÍCIOS
-  const dadosEstatisticos = {
-    receitaMes: "Kz 8.500.000",
-    clientesAtendidos: 412,
-    agendamentosHoje: 28,
-    proximoAgendamento: "10:30 (Tranças Box Braid)",
-  };
+  // ===============================
+  // STATES (SUBSTITUEM DADOS FICTÍCIOS)
+  // ===============================
+  const [dadosEstatisticos, setDadosEstatisticos] = useState({
+    receitaMes: "0 Kz",
+    clientesAtendidos: 0,
+    agendamentosHoje: 0,
+    proximoAgendamento: "-"
+  });
 
-  const clientesRecentes = [
-    { id: 101, nome: "Esmeralda Mendes", telefone: "923 123 456", servico: "Unhas de Gel", status: "Ativa" },
-    { id: 102, nome: "Adilson Ngola", telefone: "910 987 654", servico: "Corte Masculino", status: "Novo" },
-    { id: 103, nome: "Inês da Rocha", telefone: "937 555 111", servico: "Relaxamento", status: "Ativa" },
-    { id: 104, nome: "Mário João", telefone: "940 333 222", servico: "Barba e Limpeza", status: "Ativa" },
-    { id: 105, nome: "Vitória Gouveia", telefone: "951 678 901", servico: "Extensão Capilar", status: "Frequente" },
-  ];
+  const [clientesRecentes, setClientesRecentes] = useState([]);
+  const [proximosAgendamentos, setProximosAgendamentos] = useState([]);
 
-  const proximosAgendamentos = [
-    { nome: "Pedro Silva", servico: "Pedicure VIP", hora: "09:00" },
-    { nome: "Joana Freitas", servico: "Massagem Terapêutica", hora: "11:00" },
-    { nome: "Carla Pires", servico: "Pintura + Secagem", hora: "15:30" },
-  ];
+  const token = localStorage.getItem("token");
 
+  // ===============================
+  // CONSUMO DA API
+  // ===============================
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const headers = {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        };
+
+        const [clientesRes, agendamentosRes, encomendasRes] = await Promise.all([
+          fetch("https://api2.nwayami.com/api/clientes/", { headers }),
+          fetch("https://api2.nwayami.com/api/agendamentos/", { headers }),
+          fetch("https://api2.nwayami.com/api/encomendas/", { headers }),
+        ]);
+
+        const clientes = await clientesRes.json();
+        const agendamentos = await agendamentosRes.json();
+        const encomendas = await encomendasRes.json();
+
+        // 📅 Hoje
+        const hoje = new Date().toISOString().split("T")[0];
+        const agendamentosHoje = agendamentos.filter(a => a.data === hoje);
+
+        // 💰 Receita do mês
+        const mesAtual = new Date().getMonth();
+        const anoAtual = new Date().getFullYear();
+
+        const receitaMes = encomendas
+          .filter(e => {
+            const d = new Date(e.data_encomenda);
+            return d.getMonth() === mesAtual && d.getFullYear() === anoAtual;
+          })
+          .reduce((acc, e) => acc + Number(e.valor_total), 0);
+
+        setDadosEstatisticos({
+          receitaMes: `${receitaMes.toLocaleString()} Kz`,
+          clientesAtendidos: clientes.length,
+          agendamentosHoje: agendamentosHoje.length,
+          proximoAgendamento: agendamentosHoje[0]
+            ? `${agendamentosHoje[0].hora} (${agendamentosHoje[0].servico_nome})`
+            : "-"
+        });
+
+        // últimos 5
+        setClientesRecentes(clientes.slice(0, 5));
+        setProximosAgendamentos(agendamentosHoje.slice(0, 5));
+
+      } catch (error) {
+        console.error("Erro ao consumir API:", error);
+      }
+    };
+
+    fetchData();
+  }, [token]);
+
+  // ===============================
+  // FUNÇÕES JÁ EXISTENTES (INALTERADAS)
+  // ===============================
   const handleEdit = (id) => {
     alert(`Ação: Editar Cliente ${id}`);
   };
@@ -40,6 +93,10 @@ export default function DashboardAdmin() {
   const handleLogout = () => {
     alert("Ação: Logout Realizado!");
   };
+
+  // ===============================
+  // JSX (100% IGUAL AO SEU)
+  // ===============================
 
   return (
     <div className="min-h-screen bg-stone-50 text-stone-800 flex">
