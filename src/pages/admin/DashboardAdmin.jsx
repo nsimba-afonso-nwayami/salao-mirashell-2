@@ -1,18 +1,46 @@
 import AdminLayout from "./components/AdminLayout";
+import { useEffect, useState } from "react";
+import { getDashboardStats } from "../../services/dashboardService";
 
 export default function DashboardAdmin() {
-  const dadosEstatisticos = {
-    receitaMes: "Kz 8.500.000",
-    clientesAtendidos: 412,
-    agendamentosHoje: 28,
-    proximoAgendamento: "10:30 (Tranças Box Braid)",
-  };
+  const [dadosEstatisticos, setDadosEstatisticos] = useState({
+    receitaMes: "—",
+    clientesAtendidos: 0,
+    agendamentosHoje: 0,
+    proximoAgendamento: "—",
+  });
 
-  const proximosAgendamentos = [
-    { nome: "Pedro Silva", servico: "Pedicure VIP", hora: "09:00" },
-    { nome: "Joana Freitas", servico: "Massagem Terapêutica", hora: "11:00" },
-    { nome: "Carla Pires", servico: "Pintura + Secagem", hora: "15:30" },
-  ];
+  const [proximosAgendamentos, setProximosAgendamentos] = useState([]);
+
+  // CARREGAMENTO DOS DADOS
+  useEffect(() => {
+    async function carregarDashboard() {
+      try {
+        const data = await getDashboardStats();
+
+        setDadosEstatisticos({
+          receitaMes: "—", // pronto para endpoint financeiro futuramente
+          clientesAtendidos: data.counts.clientes,
+          agendamentosHoje: data.counts.agendamentosHoje,
+          proximoAgendamento: data.proximoAgendamento
+            ? `${data.proximoAgendamento.hora} (${data.proximoAgendamento.servico})`
+            : "Nenhum agendamento",
+        });
+
+        setProximosAgendamentos(
+          data.agendamentos.slice(0, 5).map((a) => ({
+            nome: a.cliente,
+            servico: a.servico,
+            hora: a.hora,
+          })),
+        );
+      } catch (error) {
+        console.error("Erro ao carregar dashboard:", error);
+      }
+    }
+
+    carregarDashboard();
+  }, []);
 
   return (
     <AdminLayout title="Painel de Gestão Mirashell">
@@ -80,24 +108,31 @@ export default function DashboardAdmin() {
           Próximos Agendamentos
         </h3>
         <div className="space-y-3">
-          {proximosAgendamentos.map((agendamento, index) => (
-            <div
-              key={index}
-              className="flex justify-between items-center p-3 rounded-lg hover:bg-stone-50 transition border-b border-stone-100 last:border-b-0"
-            >
-              <div>
-                <p className="font-semibold text-stone-700 truncate">
-                  {agendamento.nome}
-                </p>
-                <p className="text-sm text-stone-500 truncate">
-                  {agendamento.servico}
-                </p>
-              </div>
-              <span className="text-[#A2672D] font-bold shrink-0">
-                {agendamento.hora}
-              </span>
+          {proximosAgendamentos.length === 0 ? (
+            <div className="text-center text-stone-400 text-sm py-6">
+              <i className="fas fa-calendar-times text-2xl mb-2 block"></i>
+              Não há agendamentos futuros no momento
             </div>
-          ))}
+          ) : (
+            proximosAgendamentos.map((agendamento, index) => (
+              <div
+                key={index}
+                className="flex justify-between items-center p-3 rounded-lg hover:bg-stone-50 transition border-b border-stone-100 last:border-b-0"
+              >
+                <div>
+                  <p className="font-semibold text-stone-700 truncate">
+                    {agendamento.nome}
+                  </p>
+                  <p className="text-sm text-stone-500 truncate">
+                    {agendamento.servico}
+                  </p>
+                </div>
+                <span className="text-[#A2672D] font-bold shrink-0">
+                  {agendamento.hora}
+                </span>
+              </div>
+            ))
+          )}
         </div>
       </div>
     </AdminLayout>
