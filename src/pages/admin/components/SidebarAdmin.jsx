@@ -1,12 +1,12 @@
 import { Link, useNavigate } from "react-router-dom";
 import logoImg from "../../../assets/img/LOGO.png";
+import { useAuth } from "../../../contexts/AuthContext";
 
 export default function SidebarAdmin({ sidebarOpen, setSidebarOpen }) {
-  const navigate = useNavigate();
+  const { logout } = useAuth();
 
   const handleLogout = () => {
-    alert("Ação: Logout Realizado!");
-    navigate("/login");
+    logout();
   };
 
   return (
@@ -96,7 +96,7 @@ export default function SidebarAdmin({ sidebarOpen, setSidebarOpen }) {
 
         <button
           onClick={handleLogout}
-          className="w-full mt-8 flex items-center p-3 rounded-lg bg-white border border-stone-200 hover:bg-stone-50 transition duration-200 font-semibold text-[#A2672D] text-lg shadow-sm"
+          className="w-full cursor-pointer mt-8 flex items-center p-3 rounded-lg bg-white border border-stone-200 hover:bg-stone-50 transition duration-200 font-semibold text-[#A2672D] text-lg shadow-sm"
         >
           <i className="fas fa-sign-out-alt mr-3 w-5"></i> Sair
         </button>
