@@ -4,6 +4,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { loginSchema } from "../../validations/loginSchema";
 import toast from "react-hot-toast";
 import logoImg from "../../assets/img/LOGO.png";
+import { loginUser } from "../../services/loginService";
 
 export default function Login() {
   const {
@@ -18,18 +19,14 @@ export default function Login() {
 
   // Função de envio
   const onSubmit = async (data) => {
-    console.log("Pegando dados", data);
     const toastId = toast.loading("Processando login...");
+
     try {
-      // Simulando envio e verificação de login (API)
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-
+      await loginUser(data);
       toast.success("Login realizado com sucesso!", { id: toastId });
-
-      // Redirecionar para dashboard admin
       navigate("/dashboard/admin");
-    } catch (err) {
-      toast.error("Erro ao realizar login. Tente novamente.", { id: toastId });
+    } catch (error) {
+      toast.error(error.message, { id: toastId });
     }
   };
 
@@ -63,22 +60,22 @@ export default function Login() {
               htmlFor="email"
               className="block text-sm font-semibold text-stone-700 mb-2 pl-1"
             >
-              E-mail Profissional
+              Nome
             </label>
             <div className="relative">
               <input
                 id="email"
-                type="email"
-                {...register("email")}
-                placeholder="exemplo@mirashell.com"
+                type="text"
+                {...register("username")}
+                placeholder="Digite seu nome"
                 className="w-full py-3 pl-10 pr-4 bg-stone-50 border border-stone-200 rounded-xl focus:ring-2 focus:ring-[#A2672D] focus:border-transparent outline-none text-stone-800 placeholder-stone-400 transition-all"
               />
               <i className="fas fa-envelope absolute left-3 top-1/2 transform -translate-y-1/2 text-[#A2672D]"></i>
             </div>
 
-            {errors.email && (
+            {errors.username && (
               <p className="text-red-500 text-xs mt-1 pl-1">
-                {errors.email.message}
+                {errors.username.message}
               </p>
             )}
           </div>
