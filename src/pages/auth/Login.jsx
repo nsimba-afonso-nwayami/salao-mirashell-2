@@ -64,7 +64,7 @@ export default function Login() {
           {/* BOTÃO ACESSAR */}
           <button
             type="submit"
-            className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-[#A2672D] text-white font-bold rounded-xl hover:opacity-90 transition-all shadow-lg shadow-stone-200 text-lg mt-8"
+            className="w-full cursor-pointer flex items-center justify-center gap-2 px-4 py-3 bg-[#A2672D] text-white font-bold rounded-xl hover:opacity-90 transition-all shadow-lg shadow-stone-200 text-lg mt-8"
           >
             <i className="fas fa-sign-in-alt"></i>
             Aceder ao Painel
