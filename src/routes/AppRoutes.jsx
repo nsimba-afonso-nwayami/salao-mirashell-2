@@ -46,7 +46,6 @@ export default function AppRoutes() {
       <Route path="/auth/cadastrar-se" element={<Register />} />
       <Route path="/auth/esqueci-senha" element={<ForgotPassword />} />
 
-      {/*Rotas do admin */}
       {/* Rotas do admin (PROTEGIDAS) */}
       <Route element={<PrivateRoute />}>
         <Route path="/dashboard/admin">
