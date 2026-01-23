@@ -23,13 +23,13 @@ export async function getDashboardStats() {
     api.get("admins/"),
   ]);
 
-  // DATA HOJE CORRETA
+  // DATA HOJE NO FORMATO CORRETO (YYYY-MM-DD)
   const hoje = new Date().toISOString().split("T")[0];
 
   // AGENDAMENTOS DE HOJE
   const agendamentosHoje = agendamentos.data.filter((a) => a.data === hoje);
 
-  // FUTUROS + PENDENTES ORDENADOS
+  // AGENDAMENTOS FUTUROS + PENDENTES ORDENADOS POR HORA
   const agendamentosOrdenados = [...agendamentos.data]
     .filter((a) => a.status === "pendente")
     .sort((a, b) => a.hora.localeCompare(b.hora));
