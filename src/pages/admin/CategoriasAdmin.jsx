@@ -49,6 +49,10 @@ export default function CategoriasAdmin() {
     }
   };
 
+  // ===============================
+  // JSX (IGUAL AO SEU)
+  // ===============================
+
   return (
     <AdminLayout title="Gestão de Categorias">
       <div className="bg-white border border-stone-200 rounded-xl shadow-sm p-4 sm:p-6">
