@@ -4,9 +4,11 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { loginSchema } from "../../validations/loginSchema";
 import toast from "react-hot-toast";
 import logoImg from "../../assets/img/LOGO.png";
-import { loginUser } from "../../services/loginService";
+import { useAuth } from "../../contexts/AuthContext";
 
 export default function Login() {
+  const { login } = useAuth();
+
   const {
     register,
     handleSubmit,
@@ -20,13 +22,13 @@ export default function Login() {
   // Função de envio
   const onSubmit = async (data) => {
     const toastId = toast.loading("Processando login...");
-
+    
     try {
-      await loginUser(data);
+      await login(data);
       toast.success("Login realizado com sucesso!", { id: toastId });
       navigate("/dashboard/admin");
     } catch (error) {
-      toast.error(error.message, { id: toastId });
+      toast.error(error.message || "Erro ao fazer login", { id: toastId });
     }
   };
 
