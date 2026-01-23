@@ -18,19 +18,29 @@ export default function DashboardAdmin() {
       try {
         const data = await getDashboardStats();
 
+        const hoje = new Date().toISOString().split("T")[0];
+
+        const agendamentosHoje = data.agendamentos.filter(
+          (a) => a.data === hoje,
+        );
+
+        const proximos = data.agendamentos
+          .filter((a) => a.status === "pendente")
+          .sort((a, b) => a.hora.localeCompare(b.hora));
+
         setDadosEstatisticos({
-          receitaMes: "—", // pronto para endpoint financeiro futuramente
+          receitaMes: "—",
           clientesAtendidos: data.counts.clientes,
-          agendamentosHoje: data.counts.agendamentosHoje,
-          proximoAgendamento: data.proximoAgendamento
-            ? `${data.proximoAgendamento.hora} (${data.proximoAgendamento.servico})`
+          agendamentosHoje: agendamentosHoje.length,
+          proximoAgendamento: proximos.length
+            ? `${proximos[0].hora} (${proximos[0].servico_nome})`
             : "Nenhum agendamento",
         });
 
         setProximosAgendamentos(
-          data.agendamentos.slice(0, 5).map((a) => ({
-            nome: a.cliente,
-            servico: a.servico,
+          proximos.slice(0, 5).map((a) => ({
+            nome: a.nome,
+            servico: a.servico_nome,
             hora: a.hora,
           })),
         );
@@ -108,31 +118,24 @@ export default function DashboardAdmin() {
           Próximos Agendamentos
         </h3>
         <div className="space-y-3">
-          {proximosAgendamentos.length === 0 ? (
-            <div className="text-center text-stone-400 text-sm py-6">
-              <i className="fas fa-calendar-times text-2xl mb-2 block"></i>
-              Não há agendamentos futuros no momento
-            </div>
-          ) : (
-            proximosAgendamentos.map((agendamento, index) => (
-              <div
-                key={index}
-                className="flex justify-between items-center p-3 rounded-lg hover:bg-stone-50 transition border-b border-stone-100 last:border-b-0"
-              >
-                <div>
-                  <p className="font-semibold text-stone-700 truncate">
-                    {agendamento.nome}
-                  </p>
-                  <p className="text-sm text-stone-500 truncate">
-                    {agendamento.servico}
-                  </p>
-                </div>
-                <span className="text-[#A2672D] font-bold shrink-0">
-                  {agendamento.hora}
-                </span>
+          {proximosAgendamentos.map((agendamento, index) => (
+            <div
+              key={index}
+              className="flex justify-between items-center p-3 rounded-lg hover:bg-stone-50 transition border-b border-stone-100 last:border-b-0"
+            >
+              <div>
+                <p className="font-semibold text-stone-700 truncate">
+                  {agendamento.nome}
+                </p>
+                <p className="text-sm text-stone-500 truncate">
+                  {agendamento.servico}
+                </p>
               </div>
-            ))
-          )}
+              <span className="text-[#A2672D] font-bold shrink-0">
+                {agendamento.hora}
+              </span>
+            </div>
+          ))}
         </div>
       </div>
     </AdminLayout>

@@ -25,11 +25,19 @@ export async function getDashboardStats() {
 
   const hoje = new Date().toISOString().split("T")[0];
 
-  const agendamentosHoje = agendamentos.data.filter(a =>
-    a.data?.startsWith(hoje)
+  // 🔹 Agendamentos de hoje
+  const agendamentosHoje = agendamentos.data.filter(
+    (a) => a.data === hoje
   );
 
-  const proximoAgendamento = agendamentosHoje[0] || agendamentos.data[0] || null;
+  // 🔹 Agendamentos futuros e pendentes ordenados por hora
+  const agendamentosOrdenados = [...agendamentos.data]
+    .filter((a) => a.status === "pendente")
+    .sort((a, b) => a.hora.localeCompare(b.hora));
+
+  // 🔹 Próximo agendamento real
+  const proximoAgendamento =
+    agendamentosHoje[0] || agendamentosOrdenados[0] || null;
 
   return {
     counts: {
@@ -46,6 +54,7 @@ export async function getDashboardStats() {
 
     proximoAgendamento,
 
-    agendamentos: agendamentos.data,
+    // já ordenados para o dashboard
+    agendamentos: agendamentosOrdenados,
   };
 }
