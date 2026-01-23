@@ -13,13 +13,6 @@ export default function HeaderAdmin({ sidebarOpen, setSidebarOpen, title }) {
       </h2>
 
       <div className="flex items-center gap-4 sm:gap-6">
-        <button className="relative text-xl sm:text-2xl text-[#A2672D] hover:opacity-80 transition-all">
-          <i className="fas fa-bell"></i>
-          <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold">
-            3
-          </span>
-        </button>
-
         <div className="flex items-center gap-3">
           <span className="text-sm font-medium text-stone-500 hidden sm:block">
             Admin
