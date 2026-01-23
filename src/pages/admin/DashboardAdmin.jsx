@@ -18,18 +18,20 @@ export default function DashboardAdmin() {
       try {
         const data = await getDashboardStats();
 
+        // FILTRAR AGENDAMENTOS DE HOJE
         const hoje = new Date().toISOString().split("T")[0];
-
         const agendamentosHoje = data.agendamentos.filter(
           (a) => a.data === hoje,
         );
 
+        // AGENDAMENTOS FUTUROS + PENDENTES ORDENADOS POR HORA
         const proximos = data.agendamentos
           .filter((a) => a.status === "pendente")
           .sort((a, b) => a.hora.localeCompare(b.hora));
 
+        // ATUALIZA DADOS ESTATÍSTICOS
         setDadosEstatisticos({
-          receitaMes: "—",
+          receitaMes: "—", // pronto para endpoint financeiro futuramente
           clientesAtendidos: data.counts.clientes,
           agendamentosHoje: agendamentosHoje.length,
           proximoAgendamento: proximos.length
@@ -37,6 +39,7 @@ export default function DashboardAdmin() {
             : "Nenhum agendamento",
         });
 
+        // ATUALIZA PRÓXIMOS AGENDAMENTOS (top 5)
         setProximosAgendamentos(
           proximos.slice(0, 5).map((a) => ({
             nome: a.nome,
@@ -118,24 +121,31 @@ export default function DashboardAdmin() {
           Próximos Agendamentos
         </h3>
         <div className="space-y-3">
-          {proximosAgendamentos.map((agendamento, index) => (
-            <div
-              key={index}
-              className="flex justify-between items-center p-3 rounded-lg hover:bg-stone-50 transition border-b border-stone-100 last:border-b-0"
-            >
-              <div>
-                <p className="font-semibold text-stone-700 truncate">
-                  {agendamento.nome}
-                </p>
-                <p className="text-sm text-stone-500 truncate">
-                  {agendamento.servico}
-                </p>
-              </div>
-              <span className="text-[#A2672D] font-bold shrink-0">
-                {agendamento.hora}
-              </span>
+          {proximosAgendamentos.length === 0 ? (
+            <div className="text-center text-stone-400 text-sm py-6">
+              <i className="fas fa-calendar-times text-2xl mb-2 block"></i>
+              Não há agendamentos futuros no momento
             </div>
-          ))}
+          ) : (
+            proximosAgendamentos.map((agendamento, index) => (
+              <div
+                key={index}
+                className="flex justify-between items-center p-3 rounded-lg hover:bg-stone-50 transition border-b border-stone-100 last:border-b-0"
+              >
+                <div>
+                  <p className="font-semibold text-stone-700 truncate">
+                    {agendamento.nome}
+                  </p>
+                  <p className="text-sm text-stone-500 truncate">
+                    {agendamento.servico}
+                  </p>
+                </div>
+                <span className="text-[#A2672D] font-bold shrink-0">
+                  {agendamento.hora}
+                </span>
+              </div>
+            ))
+          )}
         </div>
       </div>
     </AdminLayout>
