@@ -31,7 +31,10 @@ export default function SidebarAdmin({ sidebarOpen, setSidebarOpen }) {
           </button>
 
           <div className="flex flex-col items-center mb-10 mt-2">
-            <Link to="/" className="relative p-1 border-2 border-[#A2672D] rounded-full shadow-md overflow-hidden bg-white">
+            <Link
+              to="/"
+              className="relative p-1 border-2 border-[#A2672D] rounded-full shadow-md overflow-hidden bg-white"
+            >
               <img
                 src={logoImg}
                 alt="MiraShell Logo"
@@ -88,8 +91,7 @@ export default function SidebarAdmin({ sidebarOpen, setSidebarOpen }) {
               to="/dashboard/admin/galeria"
               className="block p-3 rounded-lg hover:bg-stone-50 cursor-pointer text-stone-600 hover:text-[#A2672D] transition-colors"
             >
-              <i className="fas fa-image mr-3 w-5 text-[#A2672D]"></i>{" "}
-              Galeria
+              <i className="fas fa-image mr-3 w-5 text-[#A2672D]"></i> Galeria
             </Link>
             <Link
               to="/dashboard/admin/equipe"
@@ -97,6 +99,13 @@ export default function SidebarAdmin({ sidebarOpen, setSidebarOpen }) {
             >
               <i className="fas fa-users-cog mr-3 w-5 text-[#A2672D]"></i>{" "}
               Equipe
+            </Link>
+            <Link
+              to="/dashboard/admin/administradores"
+              className="block p-3 rounded-lg hover:bg-stone-50 cursor-pointer text-stone-600 hover:text-[#A2672D] transition-colors"
+            >
+              <i className="fas fa-user-group mr-3 w-5 text-[#A2672D]"></i>{" "}
+              Administradores
             </Link>
           </nav>
         </div>
