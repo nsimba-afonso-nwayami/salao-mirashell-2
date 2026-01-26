@@ -39,7 +39,6 @@ export default function GaleriaAdmin() {
     try {
       setLoading(true);
       const data = await listarGaleria();
-      // Ordenação decrescente por ID
       const ordenados = data.sort((a, b) => b.id - a.id);
       setFotos(ordenados);
     } catch (error) {
@@ -54,9 +53,14 @@ export default function GaleriaAdmin() {
   }, []);
 
   const onSubmitCriar = async (data) => {
+    // Trava de segurança no envio
+    if (fotos.length >= 6) {
+      toast.error("Limite de 6 imagens atingido! Elimine uma para continuar.");
+      return;
+    }
+
     try {
       const formData = new FormData();
-      // Ajustado para 'title' e 'image' conforme o erro 400 da sua API indicou
       formData.append("title", data.title);
       if (data.image && data.image[0]) {
         formData.append("image", data.image[0]);
@@ -85,15 +89,12 @@ export default function GaleriaAdmin() {
     }
   };
 
-  // Filtro atualizado para usar 'title' que vem da API
-  const fotosFiltradas = fotos
-    .filter(
-      (f) =>
-        termoPesquisa === "" ||
-        f.title?.toLowerCase().includes(termoPesquisa.toLowerCase()) ||
-        f.id.toString().includes(termoPesquisa),
-    )
-    .slice(0, 10);
+  const fotosFiltradas = fotos.filter(
+    (f) =>
+      termoPesquisa === "" ||
+      f.title?.toLowerCase().includes(termoPesquisa.toLowerCase()) ||
+      f.id.toString().includes(termoPesquisa),
+  );
 
   return (
     <>
@@ -102,16 +103,29 @@ export default function GaleriaAdmin() {
         <div className="bg-white border border-stone-200 rounded-xl shadow-sm p-4 sm:p-6">
           <div className="flex justify-between items-center mb-6 flex-wrap gap-4">
             <h3 className="text-xl font-bold text-[#A2672D]">
-              Imagens na Galeria ({fotosFiltradas.length})
+              Imagens na Galeria ({fotos.length}/6)
             </h3>
+
+            {/* Botão com feedback visual de bloqueio */}
             <button
               onClick={() => {
-                reset();
-                setOpenNovo(true);
+                if (fotos.length >= 6) {
+                  toast.error("Limite atingido! Elimine uma imagem primeiro.");
+                } else {
+                  reset();
+                  setOpenNovo(true);
+                }
               }}
-              className="flex items-center gap-2 px-4 py-2 bg-[#A2672D] text-white font-semibold rounded-lg hover:opacity-90 transition-all shadow-md cursor-pointer"
+              className={`flex items-center gap-2 px-4 py-2 font-semibold rounded-lg transition-all shadow-md cursor-pointer ${
+                fotos.length >= 6
+                  ? "bg-gray-400 text-white cursor-not-allowed"
+                  : "bg-[#A2672D] text-white hover:opacity-90"
+              }`}
             >
-              <i className="fas fa-plus"></i> Nova Imagem
+              <i
+                className={`fas ${fotos.length >= 6 ? "fa-lock" : "fa-plus"}`}
+              ></i>
+              {fotos.length >= 6 ? "Limite Atingido" : "Nova Imagem"}
             </button>
           </div>
 
@@ -210,7 +224,7 @@ export default function GaleriaAdmin() {
 
               <div>
                 <label className="block text-stone-700 font-medium mb-1">
-                  Ficheiro de Imagem (Máx 5MB)
+                  Ficheiro (Máx 5MB)
                 </label>
                 <input
                   type="file"
