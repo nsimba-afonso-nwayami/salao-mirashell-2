@@ -5,9 +5,11 @@ import { loginSchema } from "../../validations/loginSchema";
 import toast from "react-hot-toast";
 import logoImg from "../../assets/img/LOGO.png";
 import { useAuth } from "../../contexts/AuthContext";
+import { useEffect } from "react";
 
 export default function Login() {
-  const { login } = useAuth();
+  const { login, isAuthenticated, loading } = useAuth();
+  const navigate = useNavigate();
 
   const {
     register,
@@ -17,30 +19,41 @@ export default function Login() {
     resolver: yupResolver(loginSchema),
   });
 
-  const navigate = useNavigate();
+  // Se já estiver logado, redireciona
+  useEffect(() => {
+    if (!loading && isAuthenticated) {
+      navigate("/dashboard/admin", { replace: true });
+    }
+  }, [loading, isAuthenticated, navigate]);
 
-  // Função de envio
+  // Envio do formulário
   const onSubmit = async (data) => {
     const toastId = toast.loading("Processando login...");
 
     try {
       await login(data);
       toast.success("Login realizado com sucesso!", { id: toastId });
-      navigate("/dashboard/admin");
+      navigate("/dashboard/admin", { replace: true });
     } catch (error) {
       toast.error(error.message || "Erro ao fazer login", { id: toastId });
     }
   };
+
+  // Evita render enquanto verifica auth
+  if (loading) return null;
 
   return (
     <>
       <title>Entrar | Salão Mirashell</title>
       <div className="min-h-screen flex items-center justify-center bg-stone-50 p-4">
         <div className="bg-white border border-stone-200 rounded-2xl shadow-xl p-8 sm:p-10 w-full max-w-md">
-          {/* CABEÇALHO COM LOGO CIRCULAR */}
+          {/* CABEÇALHO */}
           <div className="text-center mb-10">
             <div className="flex justify-center mb-4">
-              <Link to="/" className="relative p-1 border-2 border-[#A2672D] rounded-full shadow-md bg-white">
+              <Link
+                to="/"
+                className="relative p-1 border-2 border-[#A2672D] rounded-full shadow-md bg-white"
+              >
                 <img
                   src={logoImg}
                   alt="MiraShell Logo"
@@ -56,27 +69,22 @@ export default function Login() {
             </h2>
           </div>
 
-          {/* FORMULÁRIO DE LOGIN */}
+          {/* FORMULÁRIO */}
           <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
-            {/* CAMPO E-MAIL */}
+            {/* USERNAME */}
             <div>
-              <label
-                htmlFor="email"
-                className="block text-sm font-semibold text-stone-700 mb-2 pl-1"
-              >
+              <label className="block text-sm font-semibold text-stone-700 mb-2 pl-1">
                 Nome
               </label>
               <div className="relative">
                 <input
-                  id="email"
                   type="text"
                   {...register("username")}
                   placeholder="Digite seu nome"
-                  className="w-full py-3 pl-10 pr-4 bg-stone-50 border border-stone-200 rounded-xl focus:ring-2 focus:ring-[#A2672D] focus:border-transparent outline-none text-stone-800 placeholder-stone-400 transition-all"
+                  className="w-full py-3 pl-10 pr-4 bg-stone-50 border border-stone-200 rounded-xl focus:ring-2 focus:ring-[#A2672D] outline-none"
                 />
-                <i className="fas fa-envelope absolute left-3 top-1/2 transform -translate-y-1/2 text-[#A2672D]"></i>
+                <i className="fas fa-envelope absolute left-3 top-1/2 -translate-y-1/2 text-[#A2672D]"></i>
               </div>
-
               {errors.username && (
                 <p className="text-red-500 text-xs mt-1 pl-1">
                   {errors.username.message}
@@ -84,25 +92,20 @@ export default function Login() {
               )}
             </div>
 
-            {/* CAMPO SENHA */}
+            {/* SENHA */}
             <div>
-              <label
-                htmlFor="senha"
-                className="block text-sm font-semibold text-stone-700 mb-2 pl-1"
-              >
+              <label className="block text-sm font-semibold text-stone-700 mb-2 pl-1">
                 Senha
               </label>
               <div className="relative">
                 <input
-                  id="senha"
                   type="password"
                   {...register("senha")}
                   placeholder="••••••••"
-                  className="w-full py-3 pl-10 pr-4 bg-stone-50 border border-stone-200 rounded-xl focus:ring-2 focus:ring-[#A2672D] focus:border-transparent outline-none text-stone-800 placeholder-stone-400 transition-all"
+                  className="w-full py-3 pl-10 pr-4 bg-stone-50 border border-stone-200 rounded-xl focus:ring-2 focus:ring-[#A2672D] outline-none"
                 />
-                <i className="fas fa-lock absolute left-3 top-1/2 transform -translate-y-1/2 text-[#A2672D]"></i>
+                <i className="fas fa-lock absolute left-3 top-1/2 -translate-y-1/2 text-[#A2672D]"></i>
               </div>
-
               {errors.senha && (
                 <p className="text-red-500 text-xs mt-1 pl-1">
                   {errors.senha.message}
@@ -110,25 +113,19 @@ export default function Login() {
               )}
             </div>
 
-            {/* BOTÃO ACESSAR */}
+            {/* BOTÃO */}
             <button
               type="submit"
               disabled={isSubmitting}
-              className="w-full cursor-pointer flex items-center justify-center gap-2
-            px-4 py-3 bg-[#A2672D] text-white font-bold rounded-xl
-            hover:opacity-90 transition-all shadow-lg shadow-stone-200
-            text-lg mt-8 disabled:opacity-60 disabled:cursor-not-allowed"
+              className="w-full cursor-pointer px-4 py-3 bg-[#A2672D] text-white font-bold rounded-xl hover:opacity-90 transition-all shadow-lg disabled:opacity-60"
             >
               {isSubmitting ? "A validar..." : "Aceder ao Painel"}
             </button>
           </form>
 
-          {/* LINKS DE APOIO */}
+          {/* LINKS */}
           <div className="mt-8 text-center text-sm border-t border-stone-100 pt-6">
-            <Link
-              to="#"
-              className="text-[#A2672D] hover:underline transition-all block mb-3"
-            >
+            <Link to="#" className="text-[#A2672D] hover:underline block mb-3">
               Recuperar acesso à conta
             </Link>
             <p className="text-stone-400">
