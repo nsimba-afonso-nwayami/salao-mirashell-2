@@ -1,97 +1,162 @@
-import { useState } from "react";
-import AdminLayout from "./components/AdminLayout";
-import Modal from "./components/Modal";
+import { useState, useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
 import { toast } from "react-hot-toast";
 
+import AdminLayout from "./components/AdminLayout";
+import Modal from "./components/Modal";
+
+// Importação dos serviços e validação
+import {
+  listarProdutos,
+  criarProduto,
+  atualizarProduto,
+  eliminarProduto,
+} from "../../services/produtosService";
+import { listarCategorias } from "../../services/categoriasService";
+import { produtoSchema } from "../../validations/produtoSchema";
+
 export default function ProdutosAdmin() {
+  const [produtos, setProdutos] = useState([]);
+  const [categorias, setCategorias] = useState([]);
+  const [loading, setLoading] = useState(true);
+
   const [openNovo, setOpenNovo] = useState(false);
   const [openEditar, setOpenEditar] = useState(false);
   const [produtoSelecionado, setProdutoSelecionado] = useState(null);
+
   const [filtroCategoria, setFiltroCategoria] = useState("");
   const [termoPesquisa, setTermoPesquisa] = useState("");
-  const [ordenacao, setOrdenacao] = useState("nome_asc");
 
-  const todosProdutos = [
-    {
-      id: 101,
-      nome: "Shampoo Nutritivo (500ml)",
-      preco: 4500,
-      estoque: 15,
-      categoria: "Cabelo",
-      fornecedor: "Marca X",
-      ativo: true,
-      imagem: "",
-    },
-    {
-      id: 102,
-      nome: "Condicionador Reconstrutor",
-      preco: 3800,
-      estoque: 8,
-      categoria: "Cabelo",
-      fornecedor: "Marca X",
-      ativo: true,
-      imagem: "",
-    },
-    {
-      id: 103,
-      nome: "Esmalte Vermelho Fogo",
-      preco: 1200,
-      estoque: 35,
-      categoria: "Unhas",
-      fornecedor: "ColorNails",
-      ativo: true,
-      imagem: "",
-    },
-  ];
-
-  const categorias = ["Cabelo", "Unhas", "Estética"];
-
-  // LÓGICA DE FILTRAGEM E ORDENAÇÃO
-  let produtosProcessados = todosProdutos.filter((produto) => {
-    const buscaMatch =
-      termoPesquisa === "" ||
-      produto.nome.toLowerCase().includes(termoPesquisa.toLowerCase());
-    const categoriaMatch =
-      filtroCategoria === "" || produto.categoria === filtroCategoria;
-    return buscaMatch && categoriaMatch;
+  const {
+    register,
+    handleSubmit,
+    reset,
+    setValue,
+    formState: { errors },
+  } = useForm({
+    resolver: yupResolver(produtoSchema),
   });
 
-  produtosProcessados.sort((a, b) => {
-    if (ordenacao === "nome_asc") return a.nome.localeCompare(b.nome);
-    if (ordenacao === "preco_desc") return b.preco - a.preco;
-    if (ordenacao === "estoque_asc") return a.estoque - b.estoque;
-    return 0;
-  });
-
-  const handleEdit = (produto) => {
-    setProdutoSelecionado(produto);
-    setOpenEditar(true);
-  };
-
-  const handleDelete = (id, nome) => {
-    if (window.confirm(`Deseja eliminar o produto "${nome}"?`)) {
-      toast.error(`Produto ${nome} eliminado.`);
+  // --- CARREGAMENTO DE DADOS ---
+  const carregarDados = async () => {
+    try {
+      setLoading(true);
+      const [dataProd, dataCat] = await Promise.all([
+        listarProdutos(),
+        listarCategorias(),
+      ]);
+      setProdutos(dataProd);
+      setCategorias(dataCat);
+    } catch (error) {
+      toast.error("Erro ao carregar dados da API");
+    } finally {
+      setLoading(false);
     }
   };
 
-  const formatarPreco = (preco) => `Kz ${preco.toLocaleString("pt-AO")}`;
+  useEffect(() => {
+    carregarDados();
+  }, []);
+
+  const obterNomeCategoria = (id) => {
+    const categoria = categorias.find((cat) => cat.id === id);
+    return categoria ? categoria.nome : `ID: ${id}`;
+  };
+
+  // --- HELPER PARA FORMDATA (Upload de Imagem) ---
+  const prepararFormData = (data) => {
+    const formData = new FormData();
+    formData.append("nome", data.nome);
+    formData.append("preco", data.preco);
+    formData.append("estoque", data.estoque);
+    formData.append("categoria", data.categoria);
+
+    // Se houver arquivo selecionado, adiciona ao FormData
+    if (data.imagem && data.imagem[0]) {
+      formData.append("imagem", data.imagem[0]);
+    }
+    return formData;
+  };
+
+  // --- AÇÕES DO CRUD ---
+  const onSubmitCriar = async (data) => {
+    try {
+      const formData = prepararFormData(data);
+      await criarProduto(formData);
+      toast.success("Produto criado com sucesso!");
+      setOpenNovo(false);
+      reset();
+      carregarDados();
+    } catch (err) {
+      toast.error("Erro ao criar produto");
+    }
+  };
+
+  const onSubmitEditar = async (data) => {
+    try {
+      const formData = prepararFormData(data);
+      await atualizarProduto(produtoSelecionado.id, formData);
+      toast.success("Produto atualizado!");
+      setOpenEditar(false);
+      carregarDados();
+    } catch (err) {
+      toast.error("Erro ao atualizar produto");
+    }
+  };
+
+  const handleDelete = async (id) => {
+    if (window.confirm(`Tem certeza que deseja eliminar o produto ${id}?`)) {
+      try {
+        await eliminarProduto(id);
+        toast.success("Produto eliminado!");
+        carregarDados();
+      } catch (err) {
+        toast.error("Erro ao eliminar");
+      }
+    }
+  };
+
+  const prepararEdicao = (produto) => {
+    setProdutoSelecionado(produto);
+    setValue("nome", produto.nome);
+    setValue("preco", produto.preco);
+    setValue("estoque", produto.estoque);
+    setValue("categoria", produto.categoria);
+    setOpenEditar(true);
+  };
+
+  // --- FILTROS ---
+  const produtosFiltrados = produtos.filter((produto) => {
+    const buscaMatch =
+      termoPesquisa === "" ||
+      produto.nome?.toLowerCase().includes(termoPesquisa.toLowerCase());
+    const categoriaMatch =
+      filtroCategoria === "" || String(produto.categoria) === filtroCategoria;
+    return buscaMatch && categoriaMatch;
+  });
+
+  const formatarPreco = (preco) =>
+    `Kz ${Number(preco).toLocaleString("pt-AO")}`;
 
   return (
-    <AdminLayout title="Gestão de Produtos e Estoque">
+    <AdminLayout title="Gestão de Produtos">
       <div className="bg-white border border-stone-200 rounded-xl shadow-sm p-4 sm:p-6">
         <div className="flex justify-between items-center mb-6 flex-wrap gap-4">
           <h3 className="text-xl font-bold text-[#A2672D]">
-            Inventário ({produtosProcessados.length})
+            Lista de Produtos ({produtosFiltrados.length})
           </h3>
           <button
-            onClick={() => setOpenNovo(true)}
-            className="flex items-center gap-2 px-4 py-2 bg-[#A2672D] text-white font-semibold rounded-lg hover:opacity-90 shadow-md transition-all cursor-pointer"
+            onClick={() => {
+              reset();
+              setOpenNovo(true);
+            }}
+            className="flex items-center gap-2 px-4 py-2 bg-[#A2672D] text-white font-semibold rounded-lg hover:opacity-90 transition-all shadow-md cursor-pointer"
           >
             <i className="fas fa-plus"></i> Novo Produto
           </button>
         </div>
 
-        {/* FILTROS E PESQUISA */}
         <div className="flex flex-col lg:flex-row justify-start items-start lg:items-center mb-6 gap-4 flex-wrap">
           <div className="relative w-full sm:w-auto flex-1">
             <input
@@ -107,28 +172,17 @@ export default function ProdutosAdmin() {
           <select
             value={filtroCategoria}
             onChange={(e) => setFiltroCategoria(e.target.value)}
-            className="w-full sm:w-44 py-2 px-3 bg-stone-50 border border-stone-200 rounded-lg"
+            className="w-full sm:w-auto py-2 px-3 bg-stone-50 border border-stone-200 rounded-lg cursor-pointer"
           >
             <option value="">Categoria (Todas)</option>
             {categorias.map((cat) => (
-              <option key={cat} value={cat}>
-                {cat}
+              <option key={cat.id} value={cat.id}>
+                {cat.nome}
               </option>
             ))}
           </select>
-
-          <select
-            value={ordenacao}
-            onChange={(e) => setOrdenacao(e.target.value)}
-            className="w-full sm:w-44 py-2 px-3 bg-stone-50 border border-stone-200 rounded-lg"
-          >
-            <option value="nome_asc">Nome A-Z</option>
-            <option value="preco_desc">Preço (Maior)</option>
-            <option value="estoque_asc">Estoque (Menor)</option>
-          </select>
         </div>
 
-        {/* TABELA */}
         <div className="overflow-x-auto">
           <table className="min-w-full w-full text-left border-collapse text-sm">
             <thead>
@@ -136,227 +190,192 @@ export default function ProdutosAdmin() {
                 <th className="p-3">ID</th>
                 <th className="p-3">Produto</th>
                 <th className="p-3">Categoria</th>
-                <th className="p-3 text-right">Preço</th>
                 <th className="p-3 text-center">Estoque</th>
+                <th className="p-3 text-right">Preço</th>
                 <th className="p-3 text-center">Ações</th>
               </tr>
             </thead>
             <tbody className="text-stone-600">
-              {produtosProcessados.map((produto) => (
-                <tr
-                  key={produto.id}
-                  className="border-b border-stone-50 hover:bg-stone-50 transition-colors"
-                >
-                  <td className="p-3 opacity-60">#{produto.id}</td>
-                  <td className="p-3 font-medium text-stone-800">
-                    {produto.nome}
-                  </td>
-                  <td className="p-3">
-                    <span className="bg-stone-100 px-2 py-1 rounded text-xs">
-                      {produto.categoria}
-                    </span>
-                  </td>
-                  <td className="p-3 text-right font-bold text-[#A2672D]">
-                    {formatarPreco(produto.preco)}
-                  </td>
-                  <td className="p-3 text-center">
-                    <span
-                      className={`font-bold ${produto.estoque <= 5 ? "text-red-500" : "text-stone-600"}`}
-                    >
-                      {produto.estoque}
-                    </span>
-                  </td>
-                  <td className="p-3 text-center">
-                    <div className="flex justify-center gap-2">
-                      <button
-                        onClick={() => handleEdit(produto)}
-                        className="px-3 py-1 bg-amber-100 text-amber-700 rounded font-semibold hover:bg-amber-200 transition cursor-pointer"
-                      >
-                        Editar
-                      </button>
-                      <button
-                        onClick={() => handleDelete(produto.id, produto.nome)}
-                        className="px-3 py-1 bg-red-100 text-red-700 rounded font-semibold hover:bg-red-200 transition cursor-pointer"
-                      >
-                        Eliminar
-                      </button>
-                    </div>
+              {loading ? (
+                <tr>
+                  <td colSpan="6" className="p-4 text-center">
+                    Carregando...
                   </td>
                 </tr>
-              ))}
+              ) : produtosFiltrados.length === 0 ? (
+                <tr>
+                  <td
+                    colSpan="6"
+                    className="p-8 text-center text-stone-400 italic font-medium"
+                  >
+                    Nenhum resultado encontrado
+                  </td>
+                </tr>
+              ) : (
+                produtosFiltrados.map((produto) => (
+                  <tr
+                    key={produto.id}
+                    className="border-b border-stone-50 hover:bg-stone-50 transition-colors"
+                  >
+                    <td className="p-3 opacity-70">{produto.id}</td>
+                    <td className="p-3 font-medium text-stone-800">
+                      <div className="flex items-center gap-2">
+                        {produto.imagem && (
+                          <img
+                            src={produto.imagem}
+                            className="w-8 h-8 rounded object-cover border border-stone-200"
+                            alt=""
+                          />
+                        )}
+                        {produto.nome}
+                      </div>
+                    </td>
+                    <td className="p-3">
+                      <span className="bg-stone-100 text-stone-600 px-2.5 py-1 rounded-full text-xs font-medium">
+                        {obterNomeCategoria(produto.categoria)}
+                      </span>
+                    </td>
+                    <td
+                      className={`p-3 text-center font-bold ${produto.estoque <= 5 ? "text-red-500" : ""}`}
+                    >
+                      {produto.estoque}
+                    </td>
+                    <td className="p-3 text-right font-bold text-[#A2672D]">
+                      {formatarPreco(produto.preco)}
+                    </td>
+                    <td className="p-3 text-center">
+                      <div className="flex justify-center gap-2">
+                        <button
+                          onClick={() => prepararEdicao(produto)}
+                          className="px-3 py-1 bg-amber-100 text-amber-700 rounded font-semibold hover:bg-amber-200 transition cursor-pointer"
+                        >
+                          Editar
+                        </button>
+                        <button
+                          onClick={() => handleDelete(produto.id)}
+                          className="px-3 py-1 bg-red-100 text-red-700 rounded font-semibold hover:bg-red-200 transition cursor-pointer"
+                        >
+                          Eliminar
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>
       </div>
 
-      {/* MODAL NOVO PRODUTO */}
+      {/* MODAL NOVO / EDITAR (Unificados para brevidade seguindo sua lógica) */}
       <Modal
-        isOpen={openNovo}
-        onClose={() => setOpenNovo(false)}
-        title="Novo Produto"
-        icon="fas fa-box-open"
+        isOpen={openNovo || openEditar}
+        onClose={() => {
+          setOpenNovo(false);
+          setOpenEditar(false);
+        }}
+        title={openNovo ? "Novo Produto" : "Editar Produto"}
+        icon={openNovo ? "fas fa-box-open" : "fas fa-edit"}
       >
         <div className="max-w-3xl mx-auto space-y-6">
-          <div className="text-center">
-            <h2 className="text-2xl font-bold text-stone-800">
-              Cadastrar Produto
-            </h2>
-            <p className="text-stone-500 text-sm mt-1">
-              Adicione um novo item ao seu inventário
-            </p>
-          </div>
-          <form className="grid gap-6 md:grid-cols-2">
-            <div className="md:col-span-2">
+          <form
+            onSubmit={handleSubmit(openNovo ? onSubmitCriar : onSubmitEditar)}
+            className="grid gap-6"
+          >
+            <div>
               <label className="block text-stone-700 font-medium mb-1">
                 Nome do Produto
               </label>
               <input
-                type="text"
-                placeholder="Ex: Shampoo Nutritivo"
+                {...register("nome")}
                 className="w-full px-4 py-3 rounded-lg border border-stone-300 focus:ring-2 focus:ring-amber-400 focus:outline-none"
               />
+              <p className="text-red-500 text-xs mt-1">
+                {errors.nome?.message}
+              </p>
             </div>
-            <div>
-              <label className="block text-stone-700 font-medium mb-1">
-                Categoria
-              </label>
-              <select className="w-full px-4 py-3 rounded-lg border border-stone-300 focus:ring-2 focus:ring-amber-400 focus:outline-none">
-                <option value="">Selecione</option>
-                {categorias.map((cat) => (
-                  <option key={cat}>{cat}</option>
-                ))}
-              </select>
-            </div>
-            <div>
-              <label className="block text-stone-700 font-medium mb-1">
-                Preço (Kz)
-              </label>
-              <input
-                type="number"
-                placeholder="0.00"
-                className="w-full px-4 py-3 rounded-lg border border-stone-300 focus:ring-2 focus:ring-amber-400 focus:outline-none"
-              />
-            </div>
-            <div>
-              <label className="block text-stone-700 font-medium mb-1">
-                Estoque Inicial
-              </label>
-              <input
-                type="number"
-                placeholder="Quantidade"
-                className="w-full px-4 py-3 rounded-lg border border-stone-300 focus:ring-2 focus:ring-amber-400 focus:outline-none"
-              />
-            </div>
-            <div>
-              <label className="block text-stone-700 font-medium mb-1">
-                Fornecedor
-              </label>
-              <input
-                type="text"
-                placeholder="Nome do fornecedor"
-                className="w-full px-4 py-3 rounded-lg border border-stone-300 focus:ring-2 focus:ring-amber-400 focus:outline-none"
-              />
-            </div>
-            <div className="md:col-span-2">
-              <label className="block text-stone-700 font-medium mb-1">
-                Imagem do Produto (URL ou Upload)
-              </label>
-              <div className="flex gap-2">
-                <input
-                  type="text"
-                  placeholder="https://exemplo.com/imagem.jpg"
-                  className="flex-1 px-4 py-3 rounded-lg border border-stone-300 focus:ring-2 focus:ring-amber-400 focus:outline-none"
-                />
-                <button
-                  type="button"
-                  className="px-4 py-3 bg-stone-100 border border-stone-300 rounded-lg hover:bg-stone-200 transition"
+
+            <div className="grid md:grid-cols-2 gap-6">
+              <div>
+                <label className="block text-stone-700 font-medium mb-1">
+                  Categoria
+                </label>
+                <select
+                  {...register("categoria")}
+                  className="w-full px-4 py-3 rounded-lg border border-stone-300 focus:ring-2 focus:ring-amber-400 focus:outline-none"
                 >
-                  <i className="fas fa-upload"></i>
-                </button>
+                  <option value="">Selecione a categoria</option>
+                  {categorias.map((cat) => (
+                    <option key={cat.id} value={cat.id}>
+                      {cat.nome}
+                    </option>
+                  ))}
+                </select>
+                <p className="text-red-500 text-xs mt-1">
+                  {errors.categoria?.message}
+                </p>
+              </div>
+              <div>
+                <label className="block text-stone-700 font-medium mb-1">
+                  Preço (Kz)
+                </label>
+                <input
+                  type="number"
+                  step="0.01"
+                  {...register("preco")}
+                  className="w-full px-4 py-3 rounded-lg border border-stone-300 focus:ring-2 focus:ring-amber-400 focus:outline-none"
+                />
+                <p className="text-red-500 text-xs mt-1">
+                  {errors.preco?.message}
+                </p>
+              </div>
+              <div>
+                <label className="block text-stone-700 font-medium mb-1">
+                  Estoque
+                </label>
+                <input
+                  type="number"
+                  {...register("estoque")}
+                  className="w-full px-4 py-3 rounded-lg border border-stone-300 focus:ring-2 focus:ring-amber-400 focus:outline-none"
+                />
+                <p className="text-red-500 text-xs mt-1">
+                  {errors.estoque?.message}
+                </p>
+              </div>
+
+              {/* CAMPO DE UPLOAD DE IMAGEM */}
+              <div>
+                <label className="block text-stone-700 font-medium mb-1">
+                  Imagem do Produto
+                </label>
+                <input
+                  type="file"
+                  accept="image/*"
+                  {...register("imagem")}
+                  className="w-full text-sm text-stone-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-amber-50 file:text-amber-700 hover:file:bg-amber-100 cursor-pointer"
+                />
+                <p className="text-red-500 text-xs mt-1">
+                  {errors.imagem?.message}
+                </p>
               </div>
             </div>
-            <div className="md:col-span-2 flex justify-end gap-3 mt-4">
-              <button
-                type="button"
-                onClick={() => setOpenNovo(false)}
-                className="px-6 py-3 bg-stone-200 hover:bg-stone-300 text-stone-800 rounded-lg cursor-pointer"
-              >
-                Cancelar
-              </button>
-              <button
-                type="submit"
-                className="px-6 py-3 bg-[#A2672D] text-white font-semibold rounded-lg cursor-pointer"
-              >
-                Salvar Produto
-              </button>
-            </div>
-          </form>
-        </div>
-      </Modal>
 
-      {/* MODAL EDITAR PRODUTO */}
-      <Modal
-        isOpen={openEditar}
-        onClose={() => setOpenEditar(false)}
-        title="Editar Produto"
-        icon="fas fa-edit"
-      >
-        <div className="max-w-3xl mx-auto space-y-6">
-          <div className="text-center">
-            <h2 className="text-2xl font-bold text-stone-800">
-              Editar Produto
-            </h2>
-            <p className="text-stone-500 text-sm mt-1">
-              Atualize as informações e estoque do item
-            </p>
-          </div>
-          <form className="grid gap-6 md:grid-cols-2">
-            <div className="md:col-span-2">
-              <label className="block text-stone-700 font-medium mb-1">
-                Nome do Produto
-              </label>
-              <input
-                type="text"
-                defaultValue={produtoSelecionado?.nome || ""}
-                className="w-full px-4 py-3 rounded-lg border border-stone-300 focus:ring-2 focus:ring-amber-400 focus:outline-none"
-              />
-            </div>
-            <div>
-              <label className="block text-stone-700 font-medium mb-1">
-                Categoria
-              </label>
-              <select
-                defaultValue={produtoSelecionado?.categoria || ""}
-                className="w-full px-4 py-3 rounded-lg border border-stone-300 focus:ring-2 focus:ring-amber-400 focus:outline-none"
-              >
-                {categorias.map((cat) => (
-                  <option key={cat}>{cat}</option>
-                ))}
-              </select>
-            </div>
-            <div>
-              <label className="block text-stone-700 font-medium mb-1">
-                Preço (Kz)
-              </label>
-              <input
-                type="number"
-                defaultValue={produtoSelecionado?.preco || ""}
-                className="w-full px-4 py-3 rounded-lg border border-stone-300 focus:ring-2 focus:ring-amber-400 focus:outline-none"
-              />
-            </div>
-            <div className="md:col-span-2 flex justify-end gap-3 mt-4">
+            <div className="flex justify-end gap-3 mt-4">
               <button
                 type="button"
-                onClick={() => setOpenEditar(false)}
-                className="px-6 py-3 bg-stone-200 hover:bg-stone-300 text-stone-800 rounded-lg cursor-pointer"
+                onClick={() => {
+                  setOpenNovo(false);
+                  setOpenEditar(false);
+                }}
+                className="px-6 py-3 cursor-pointer bg-stone-200 text-stone-800 rounded-lg"
               >
                 Cancelar
               </button>
               <button
                 type="submit"
-                className="px-6 py-3 bg-[#A2672D] text-white font-semibold rounded-lg cursor-pointer"
+                className={`px-6 py-3 cursor-pointer text-white font-semibold rounded-lg ${openNovo ? "bg-[#A2672D]" : "bg-amber-600"}`}
               >
-                Atualizar Produto
+                {openNovo ? "Salvar Produto" : "Salvar Alterações"}
               </button>
             </div>
           </form>
