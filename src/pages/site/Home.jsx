@@ -1,6 +1,8 @@
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Header from "../../components/header/Header";
 import Footer from "../../components/footer/Footer";
+import { listarGaleria } from "../../services/galeriaService";
 import mirachelVideo from "../../assets/video/mirachel_full.mp4";
 import AboutImg from "../../assets/img/about.jpg";
 import AboutIconImg1 from "../../assets/img/about-icon-1.png";
@@ -11,12 +13,6 @@ import ServicoPeruca from "../../assets/img/service-perucas.jpg";
 import ServicoTrancas from "../../assets/img/service-trancas.jpg";
 import ServicoEstetica from "../../assets/img/service-estetica.jpg";
 import GaleriaBg from "../../assets/img/gallery.jpg";
-import GaleriaImg1 from "../../assets/img/galeria1.jpg";
-import GaleriaImg2 from "../../assets/img/galeria2.jpg";
-import GaleriaImg3 from "../../assets/img/galeria3.jpg";
-import GaleriaImg4 from "../../assets/img/galeria4.jpg";
-import GaleriaImg5 from "../../assets/img/galeria5.jpg";
-import GaleriaImg6 from "../../assets/img/galeria6.jpg";
 import VisitBg from "../../assets/img/visit.png";
 
 import LightGallery from "lightgallery/react";
@@ -28,6 +24,34 @@ import "lightgallery/css/lg-thumbnail.css";
 import "lightgallery/css/lg-zoom.css";
 
 export default function Home() {
+  const [fotos, setFotos] = useState([]); // Estado para as fotos
+
+  // Função para carregar as fotos da API
+  const carregarGaleria = async () => {
+    try {
+      const data = await listarGaleria();
+
+      // 1. Ordena por ID decrescente (b.id - a.id) para mostrar as mais novas primeiro
+      // 2. .slice(0, 6) limita o array para conter apenas os primeiros 6 elementos
+      const ultimasSeis = data.sort((a, b) => b.id - a.id).slice(0, 6);
+
+      setFotos(ultimasSeis);
+    } catch (error) {
+      console.error("Erro ao carregar galeria:", error);
+    }
+  };
+
+  useEffect(() => {
+    carregarGaleria();
+  }, []);
+
+  // Helper para formatar a URL da imagem (mesma lógica do Admin)
+  const formatImageUrl = (url) => {
+    if (!url) return "";
+    return url.includes("/media/") && !url.includes("/api/media/")
+      ? url.replace("/media/", "/api/media/")
+      : url;
+  };
   return (
     <>
       <title>Salão Mirashell</title>
@@ -240,84 +264,33 @@ export default function Home() {
           plugins={[lgThumbnail, lgZoom]}
           elementClassNames="grid gap-8 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3"
         >
-          <a
-            href={GaleriaImg1}
-            className="relative h-72 overflow-hidden group w-full"
-          >
-            <img
-              src={GaleriaImg1}
-              alt="Galeria 1"
-              className="w-full h-full object-cover transform transition-transform duration-500 group-hover:scale-110"
-            />
-            <div className="absolute inset-0 bg-black/70 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-              <i className="fas fa-plus text-white text-[6rem]"></i>
-            </div>
-          </a>
-          <a
-            href={GaleriaImg2}
-            className="relative h-72 overflow-hidden group w-full"
-          >
-            <img
-              src={GaleriaImg2}
-              alt="Galeria 2"
-              className="w-full h-full object-cover transform transition-transform duration-500 group-hover:scale-110"
-            />
-            <div className="absolute inset-0 bg-black/70 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-              <i className="fas fa-plus text-white text-[6rem]"></i>
-            </div>
-          </a>
-          <a
-            href={GaleriaImg3}
-            className="relative h-72 overflow-hidden group w-full"
-          >
-            <img
-              src={GaleriaImg3}
-              alt="Galeria 3"
-              className="w-full h-full object-cover transform transition-transform duration-500 group-hover:scale-110"
-            />
-            <div className="absolute inset-0 bg-black/70 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-              <i className="fas fa-plus text-white text-[6rem]"></i>
-            </div>
-          </a>
-          <a
-            href={GaleriaImg4}
-            className="relative h-72 overflow-hidden group w-full"
-          >
-            <img
-              src={GaleriaImg4}
-              alt="Galeria 4"
-              className="w-full h-full object-cover transform transition-transform duration-500 group-hover:scale-110"
-            />
-            <div className="absolute inset-0 bg-black/70 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-              <i className="fas fa-plus text-white text-[6rem]"></i>
-            </div>
-          </a>
-          <a
-            href={GaleriaImg5}
-            className="relative h-72 overflow-hidden group w-full"
-          >
-            <img
-              src={GaleriaImg5}
-              alt="Galeria 5"
-              className="w-full h-full object-cover transform transition-transform duration-500 group-hover:scale-110"
-            />
-            <div className="absolute inset-0 bg-black/70 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-              <i className="fas fa-plus text-white text-[6rem]"></i>
-            </div>
-          </a>
-          <a
-            href={GaleriaImg6}
-            className="relative h-72 overflow-hidden group w-full"
-          >
-            <img
-              src={GaleriaImg6}
-              alt="Galeria 6"
-              className="w-full h-full object-cover transform transition-transform duration-500 group-hover:scale-110"
-            />
-            <div className="absolute inset-0 bg-black/70 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-              <i className="fas fa-plus text-white text-[6rem]"></i>
-            </div>
-          </a>
+          {fotos.length > 0 ? (
+            fotos.map((foto) => (
+              <a
+                key={foto.id}
+                href={formatImageUrl(foto.image)}
+                className="relative h-72 overflow-hidden group w-full block"
+              >
+                <img
+                  src={formatImageUrl(foto.image)}
+                  alt={foto.title || "Imagem da Galeria"}
+                  className="w-full h-full object-cover transform transition-transform duration-500 group-hover:scale-110"
+                />
+                <div className="absolute inset-0 bg-black/70 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  <i className="fas fa-plus text-white text-6xl mb-2"></i>
+                  {foto.title && (
+                    <span className="text-white font-medium px-4 text-center">
+                      {foto.title}
+                    </span>
+                  )}
+                </div>
+              </a>
+            ))
+          ) : (
+            <p className="text-center text-white col-span-full">
+              Carregando galeria...
+            </p>
+          )}
         </LightGallery>
       </section>
 
