@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { toast } from "react-hot-toast";
+import { Link } from "react-router-dom";
 
 import AdminLayout from "./components/AdminLayout";
 import Modal from "./components/Modal";
@@ -256,6 +257,12 @@ export default function ProdutosAdmin() {
                     </td>
                     <td className="p-3 text-center">
                       <div className="flex justify-center gap-2">
+                        <Link
+                          to="/loja"
+                          className="px-3 py-1 bg-stone-100 text-stone-700 rounded font-semibold hover:bg-stone-200 transition cursor-pointer flex items-center gap-1"
+                        >
+                          Ver
+                        </Link>
                         <button
                           onClick={() => prepararEdicao(produto)}
                           className="px-3 py-1 bg-amber-100 text-amber-700 rounded font-semibold hover:bg-amber-200 transition cursor-pointer"
