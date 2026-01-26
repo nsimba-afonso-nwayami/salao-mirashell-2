@@ -28,6 +28,14 @@ export default function ProdutosAdmin() {
   const [filtroCategoria, setFiltroCategoria] = useState("");
   const [termoPesquisa, setTermoPesquisa] = useState("");
 
+  // FUNÇÃO PARA FORMATAR A URL DA IMAGEM
+  const formatImageUrl = (url) => {
+    if (!url) return "";
+    return url.includes("/media/") && !url.includes("/api/media/")
+      ? url.replace("/media/", "/api/media/")
+      : url;
+  };
+
   const {
     register,
     handleSubmit,
@@ -126,15 +134,18 @@ export default function ProdutosAdmin() {
     setOpenEditar(true);
   };
 
-  // --- FILTROS ---
-  const produtosFiltrados = produtos.filter((produto) => {
-    const buscaMatch =
-      termoPesquisa === "" ||
-      produto.nome?.toLowerCase().includes(termoPesquisa.toLowerCase());
-    const categoriaMatch =
-      filtroCategoria === "" || String(produto.categoria) === filtroCategoria;
-    return buscaMatch && categoriaMatch;
-  });
+  // --- FILTROS, ORDENAÇÃO E LIMITE ---
+  const produtosFiltrados = produtos
+    .filter((produto) => {
+      const buscaMatch =
+        termoPesquisa === "" ||
+        produto.nome?.toLowerCase().includes(termoPesquisa.toLowerCase());
+      const categoriaMatch =
+        filtroCategoria === "" || String(produto.categoria) === filtroCategoria;
+      return buscaMatch && categoriaMatch;
+    })
+    .reverse() // COLOCA OS ÚLTIMOS (RECENTES) PRIMEIRO
+    .slice(0, 10); // LIMITA AOS 10 PRIMEIROS RESULTADOS
 
   const formatarPreco = (preco) =>
     `Kz ${Number(preco).toLocaleString("pt-AO")}`;
@@ -222,7 +233,7 @@ export default function ProdutosAdmin() {
                       <div className="flex items-center gap-2">
                         {produto.imagem && (
                           <img
-                            src={produto.imagem}
+                            src={formatImageUrl(produto.imagem)}
                             className="w-8 h-8 rounded object-cover border border-stone-200"
                             alt=""
                           />
@@ -267,7 +278,6 @@ export default function ProdutosAdmin() {
         </div>
       </div>
 
-      {/* MODAL NOVO / EDITAR (Unificados para brevidade seguindo sua lógica) */}
       <Modal
         isOpen={openNovo || openEditar}
         onClose={() => {
@@ -343,7 +353,6 @@ export default function ProdutosAdmin() {
                 </p>
               </div>
 
-              {/* CAMPO DE UPLOAD DE IMAGEM */}
               <div>
                 <label className="block text-stone-700 font-medium mb-1">
                   Imagem do Produto
