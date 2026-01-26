@@ -29,7 +29,7 @@ export default function Modal({ isOpen, onClose, title, icon, children }) {
         {/* CABEÇALHO */}
         <div className="flex items-center gap-4 p-6 border-b border-stone-200 sticky top-0 bg-stone-50 z-10">
           {icon && (
-            <div className="w-11 h-11 flex items-center justify-center rounded-full bg-amber-400 text-stone-900 text-xl shadow-sm">
+            <div className="w-11 h-11 flex items-center justify-center rounded-full bg-[#A2672D] text-gray-200 text-xl shadow-sm">
               <i className={icon}></i>
             </div>
           )}
@@ -38,7 +38,7 @@ export default function Modal({ isOpen, onClose, title, icon, children }) {
 
           <button
             onClick={onClose}
-            className="ml-auto cursor-pointer text-stone-500 hover:text-amber-500 text-3xl font-bold transition-colors"
+            className="ml-auto cursor-pointer text-stone-500 hover:text-[#A2672D] text-3xl font-bold transition-colors"
             title="Fechar"
           >
             <i className="fas fa-times"></i>
