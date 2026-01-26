@@ -26,6 +26,7 @@ import ProdutosAdmin from "../pages/admin/ProdutosAdmin";
 import EncomendasAdmin from "../pages/admin/EncomendasAdmin";
 import GaleriaAdmin from "../pages/admin/GaleriaAdmin";
 import EquipeAdmin from "../pages/admin/EquipeAdmin";
+import AdministradoresAdmin from "../pages/admin/AdministradoresAdmin";
 import NotFoundAdmin from "../pages/admin/NotFoundAdmin";
 
 export default function AppRoutes() {
@@ -58,6 +59,7 @@ export default function AppRoutes() {
           <Route path="encomendas" element={<EncomendasAdmin />} />
           <Route path="galeria" element={<GaleriaAdmin />} />
           <Route path="equipe" element={<EquipeAdmin />} />
+          <Route path="administradores" element={<AdministradoresAdmin />} />
           <Route path="*" element={<NotFoundAdmin />} />
         </Route>
       </Route>
