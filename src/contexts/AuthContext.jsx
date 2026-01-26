@@ -14,15 +14,22 @@ export function AuthProvider({ children }) {
   // Inicialização: verifica se existe token no localStorage
   useEffect(() => {
     const token = localStorage.getItem("accessToken");
+
     if (token) {
-      setUser({ token }); // Aqui poderíamos decodificar JWT depois
+      setUser({ token });
     }
+
     setLoading(false);
   }, []);
 
   // Função de login
   const login = async (credentials) => {
     const data = await loginService(credentials);
+
+    // guardar tokens
+    localStorage.setItem("accessToken", data.access);
+    localStorage.setItem("refreshToken", data.refresh);
+
     setUser({ token: data.access });
   };
 
@@ -34,7 +41,6 @@ export function AuthProvider({ children }) {
     navigate("/auth/login");
   };
 
-  // Estado do contexto
   const value = {
     user,
     login,
@@ -46,7 +52,7 @@ export function AuthProvider({ children }) {
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
-// Hook customizado para usar o AuthContext
+// Hook customizado
 export function useAuth() {
   return useContext(AuthContext);
 }
