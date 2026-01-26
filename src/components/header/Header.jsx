@@ -2,9 +2,11 @@ import { Link } from "react-router-dom";
 import { HashLink } from "react-router-hash-link";
 import { useState } from "react";
 import logo from "../../assets/img/LOGO.png";
+import { useAuth } from "../../contexts/AuthContext";
 
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const { isAuthenticated, logout } = useAuth();
 
   const linkClasses =
     "text-white hover:text-[#5a4d3e] transition-colors duration-200";
@@ -12,7 +14,6 @@ export default function Header() {
   return (
     <header className="fixed top-0 left-0 w-full bg-[#A2672D] z-50 shadow-md">
       <div className="max-w-7xl mx-auto px-4 flex items-center justify-between h-20">
-
         {/* Logo */}
         <Link to="/" className="flex items-center" title="MiraShell Logo">
           <div className="relative p-1 border-2 border-[#A2672D] rounded-full shadow-md bg-white">
@@ -35,7 +36,9 @@ export default function Header() {
             md:translate-x-0
           `}
         >
-          <Link to="/" className={linkClasses}>Início</Link>
+          <Link to="/" className={linkClasses}>
+            Início
+          </Link>
 
           <HashLink smooth to="/#sobre" className={linkClasses}>
             Sobre
@@ -62,18 +65,41 @@ export default function Header() {
           </HashLink>
         </nav>
 
-        {/* Ícones */}
-        <div className="flex items-center gap-4 text-white">
-          <Link
-            to="/auth/login"
-            className="text-xl hover:text-[#5a4d3e] transition-colors duration-200"
-          >
-            <i className="fas fa-user"></i>
-          </Link>
+        {/* Ações (Login / Dashboard / Logout) */}
+        <div className="flex items-center gap-5 text-white text-sm font-medium">
+          {isAuthenticated ? (
+            <>
+              {/* Dashboard */}
+              <Link
+                to="/dashboard/admin"
+                className="flex items-center gap-2 hover:text-[#5a4d3e] transition"
+              >
+                <i className="fas fa-chart-line text-lg"></i>
+                <span className="hidden sm:inline">Dashboard</span>
+              </Link>
 
-          {/* Botão menu mobile */}
+              {/* Logout */}
+              <button
+                onClick={logout}
+                className="flex items-center gap-2 cursor-pointer hover:text-[#5a4d3e] transition"
+              >
+                <i className="fas fa-sign-out-alt text-lg"></i>
+                <span className="hidden sm:inline">Sair</span>
+              </button>
+            </>
+          ) : (
+            <Link
+              to="/auth/login"
+              className="flex items-center gap-2 hover:text-[#5a4d3e] transition"
+            >
+              <i className="fas fa-user text-lg"></i>
+              <span className="hidden sm:inline">Entrar</span>
+            </Link>
+          )}
+
+          {/* Menu mobile */}
           <button
-            className="md:hidden text-2xl"
+            className="md:hidden text-2xl ml-2"
             onClick={() => setMenuOpen(!menuOpen)}
           >
             <i className={`fas ${menuOpen ? "fa-times" : "fa-bars"}`}></i>
