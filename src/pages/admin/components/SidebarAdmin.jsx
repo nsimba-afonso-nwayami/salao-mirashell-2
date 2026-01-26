@@ -85,6 +85,13 @@ export default function SidebarAdmin({ sidebarOpen, setSidebarOpen }) {
               Encomendas
             </Link>
             <Link
+              to="/dashboard/admin/galeria"
+              className="block p-3 rounded-lg hover:bg-stone-50 cursor-pointer text-stone-600 hover:text-[#A2672D] transition-colors"
+            >
+              <i className="fas fa-image mr-3 w-5 text-[#A2672D]"></i>{" "}
+              Galeria
+            </Link>
+            <Link
               to="/dashboard/admin/equipe"
               className="block p-3 rounded-lg hover:bg-stone-50 cursor-pointer text-stone-600 hover:text-[#A2672D] transition-colors"
             >
