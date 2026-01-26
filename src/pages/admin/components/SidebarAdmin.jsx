@@ -31,13 +31,13 @@ export default function SidebarAdmin({ sidebarOpen, setSidebarOpen }) {
           </button>
 
           <div className="flex flex-col items-center mb-10 mt-2">
-            <div className="relative p-1 border-2 border-[#A2672D] rounded-full shadow-md overflow-hidden bg-white">
+            <Link to="/" className="relative p-1 border-2 border-[#A2672D] rounded-full shadow-md overflow-hidden bg-white">
               <img
                 src={logoImg}
                 alt="MiraShell Logo"
                 className="w-20 h-20 md:w-24 md:h-24 object-cover rounded-full"
               />
-            </div>
+            </Link>
             <span className="mt-3 font-bold text-[#A2672D] tracking-widest text-sm uppercase">
               Mirashell
             </span>
