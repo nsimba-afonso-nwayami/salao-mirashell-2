@@ -107,7 +107,7 @@ export default function Footer() {
 
       {/* Crédito */}
       <div className="text-center text-base md:text-lg py-6 mt-6 border-t-2 border-white w-2/3 mx-auto">
-        &copy; {new Date().getFullYear()} Salão Mirashell | Todos os direitos
+        &copy; {new Date().getFullYear()} NWAYAMI | Todos os direitos
         reservados!
       </div>
     </footer>
