@@ -9,6 +9,11 @@ export default function DashboardAdmin() {
     receitaMes: "—",
     totalEncomendas: 0,
     agendamentosHoje: 0,
+    agendamentosPendentes: 0,
+    servicos: 0,
+    produtos: 0,
+    profissionais: 0,
+    categorias: 0,
     proximoAgendamento: "—",
   });
 
@@ -20,17 +25,20 @@ export default function DashboardAdmin() {
         setLoading(true);
         const data = await getDashboardStats();
 
-        // O segredo está aqui: usar EXATAMENTE o que o Service calculou
         setDadosEstatisticos({
           receitaMes: "—",
           totalEncomendas: data.counts.encomendas,
-          agendamentosHoje: data.counts.agendamentosHoje, // Puxando o valor que já é 2 no backend
+          agendamentosHoje: data.counts.agendamentosHoje,
+          agendamentosPendentes: data.counts.totalPendentes,
+          servicos: data.counts.servicos,
+          produtos: data.counts.produtos,
+          profissionais: data.counts.profissionais,
+          categorias: data.counts.categorias,
           proximoAgendamento: data.proximoAgendamento
             ? `${data.proximoAgendamento.hora} (${data.proximoAgendamento.servico_nome})`
             : "Nenhum agendamento",
         });
 
-        // Agendamentos pendentes ordenados (já vêm do service)
         setProximosAgendamentos(data.agendamentos.slice(0, 5));
       } catch (error) {
         console.error("Erro ao carregar dashboard:", error);
@@ -38,7 +46,6 @@ export default function DashboardAdmin() {
         setLoading(false);
       }
     }
-
     carregarDashboard();
   }, []);
 
@@ -47,7 +54,7 @@ export default function DashboardAdmin() {
       <title>Dashboard Mirashell</title>
       <AdminLayout title="Painel de Gestão Mirashell">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-8">
-          {/* Card Receita */}
+          {/* Receita */}
           <div className="bg-white border border-stone-200 p-6 rounded-xl shadow-sm flex flex-col hover:shadow-md transition-all">
             <div className="flex justify-between items-start">
               <div>
@@ -62,7 +69,7 @@ export default function DashboardAdmin() {
             </div>
           </div>
 
-          {/* Card Encomendas */}
+          {/* Encomendas */}
           <Link
             to="/dashboard/admin/encomendas"
             className="bg-white border border-stone-200 p-6 rounded-xl shadow-sm flex flex-col hover:shadow-md hover:scale-[1.01] transition-all"
@@ -83,7 +90,28 @@ export default function DashboardAdmin() {
             </p>
           </Link>
 
-          {/* Card Agendamentos - CORRIGIDO */}
+          {/* Agendamentos Pendentes (Geral) */}
+          <Link
+            to="/dashboard/admin/agendamentos"
+            className="bg-white border border-stone-200 p-6 rounded-xl shadow-sm flex flex-col hover:shadow-md hover:scale-[1.01] transition-all border-l-4 border-l-[#A2672D]"
+          >
+            <div className="flex justify-between items-start">
+              <div>
+                <p className="text-stone-500 text-sm font-medium">
+                  Total Pendentes
+                </p>
+                <h3 className="text-2xl sm:text-3xl font-bold mt-1 text-stone-800">
+                  {dadosEstatisticos.agendamentosPendentes}
+                </h3>
+              </div>
+              <i className="fas fa-clock text-3xl text-[#A2672D] opacity-40"></i>
+            </div>
+            <p className="text-xs text-stone-400 mt-2">
+              Todos os agendamentos em espera
+            </p>
+          </Link>
+
+          {/* Agendamentos de Hoje */}
           <Link
             to="/dashboard/admin/agendamentos"
             className="bg-white border border-stone-200 p-6 rounded-xl shadow-sm flex flex-col hover:shadow-md hover:scale-[1.01] transition-all"
@@ -99,20 +127,86 @@ export default function DashboardAdmin() {
               </div>
               <i className="fas fa-calendar-check text-3xl text-[#A2672D] opacity-40"></i>
             </div>
-            <p className="text-xs text-stone-500 mt-2 font-medium">
+            <p className="text-xs text-stone-500 mt-2 font-medium italic truncate">
               Próximo:{" "}
               <span className="text-[#A2672D]">
                 {dadosEstatisticos.proximoAgendamento}
               </span>
             </p>
           </Link>
+
+          {/* Serviços */}
+          <Link
+            to="/dashboard/admin/servicos"
+            className="bg-white border border-stone-200 p-6 rounded-xl shadow-sm flex flex-col hover:shadow-md hover:scale-[1.01] transition-all"
+          >
+            <div className="flex justify-between items-start">
+              <div>
+                <p className="text-stone-500 text-sm font-medium">Serviços</p>
+                <h3 className="text-2xl sm:text-3xl font-bold mt-1 text-stone-800">
+                  {dadosEstatisticos.servicos}
+                </h3>
+              </div>
+              <i className="fas fa-cut text-3xl text-[#A2672D] opacity-40"></i>
+            </div>
+          </Link>
+
+          {/* Produtos */}
+          <Link
+            to="/dashboard/admin/produtos"
+            className="bg-white border border-stone-200 p-6 rounded-xl shadow-sm flex flex-col hover:shadow-md hover:scale-[1.01] transition-all"
+          >
+            <div className="flex justify-between items-start">
+              <div>
+                <p className="text-stone-500 text-sm font-medium">Produtos</p>
+                <h3 className="text-2xl sm:text-3xl font-bold mt-1 text-stone-800">
+                  {dadosEstatisticos.produtos}
+                </h3>
+              </div>
+              <i className="fas fa-shopping-bag text-3xl text-[#A2672D] opacity-40"></i>
+            </div>
+          </Link>
+
+          {/* Profissionais */}
+          <Link
+            to="/dashboard/admin/profissionais"
+            className="bg-white border border-stone-200 p-6 rounded-xl shadow-sm flex flex-col hover:shadow-md hover:scale-[1.01] transition-all"
+          >
+            <div className="flex justify-between items-start">
+              <div>
+                <p className="text-stone-500 text-sm font-medium">
+                  Profissionais
+                </p>
+                <h3 className="text-2xl sm:text-3xl font-bold mt-1 text-stone-800">
+                  {dadosEstatisticos.profissionais}
+                </h3>
+              </div>
+              <i className="fas fa-user-tie text-3xl text-[#A2672D] opacity-40"></i>
+            </div>
+          </Link>
+
+          {/* Categorias */}
+          <Link
+            to="/dashboard/admin/categorias"
+            className="bg-white border border-stone-200 p-6 rounded-xl shadow-sm flex flex-col hover:shadow-md hover:scale-[1.01] transition-all"
+          >
+            <div className="flex justify-between items-start">
+              <div>
+                <p className="text-stone-500 text-sm font-medium">Categorias</p>
+                <h3 className="text-2xl sm:text-3xl font-bold mt-1 text-stone-800">
+                  {dadosEstatisticos.categorias}
+                </h3>
+              </div>
+              <i className="fas fa-tags text-3xl text-[#A2672D] opacity-40"></i>
+            </div>
+          </Link>
         </div>
 
-        {/* LISTA LATERAL */}
+        {/* LISTA LATERAL ABAIXO */}
         <div className="bg-white border border-stone-200 rounded-xl shadow-sm p-4 sm:p-6">
           <div className="flex justify-between items-center mb-6">
             <h3 className="text-xl font-bold text-[#A2672D]">
-              Próximos Agendamentos
+              Lista de Espera Pendente
             </h3>
             <Link
               to="/dashboard/admin/agendamentos"
@@ -121,17 +215,12 @@ export default function DashboardAdmin() {
               Ver todos <i className="fas fa-arrow-right ml-1"></i>
             </Link>
           </div>
-
+          {/* Mapeamento dos agendamentos pendentes aqui... (mesma lógica anterior) */}
           <div className="space-y-3">
             {loading ? (
               <p className="text-center text-stone-400 py-6 italic">
-                Sincronizando dados...
+                Sincronizando...
               </p>
-            ) : proximosAgendamentos.length === 0 ? (
-              <div className="text-center text-stone-400 text-sm py-6">
-                <i className="fas fa-calendar-times text-2xl mb-2 block"></i>
-                Nenhum agendamento pendente encontrado.
-              </div>
             ) : (
               proximosAgendamentos.map((ag, index) => (
                 <Link
