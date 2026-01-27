@@ -6,6 +6,11 @@ export const agendamentosSchema = yup.object().shape({
     .required("O nome do cliente é obrigatório")
     .min(3, "Mínimo de 3 caracteres"),
 
+  telefone: yup
+    .string()
+    .required("O telefone é obrigatório")
+    .min(9, "O telefone deve ter pelo menos 9 dígitos"),
+
   email: yup
     .string()
     .email("Email inválido")
