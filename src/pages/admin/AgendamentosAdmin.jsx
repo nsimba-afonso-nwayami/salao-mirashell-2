@@ -118,6 +118,7 @@ export default function AgendamentosAdmin() {
     const buscaMatch =
       termoPesquisa === "" ||
       ag.nome?.toLowerCase().includes(termoPesquisa.toLowerCase()) ||
+      ag.telefone?.includes(termoPesquisa) || // Adicionado busca por telefone
       ag.servico_nome?.toLowerCase().includes(termoPesquisa.toLowerCase());
     const statusMatch =
       filtroStatus === "" ||
@@ -164,7 +165,7 @@ export default function AgendamentosAdmin() {
             <div className="relative w-full sm:w-auto flex-1">
               <input
                 type="text"
-                placeholder="Pesquisar Cliente ou Serviço..."
+                placeholder="Pesquisar Cliente, Telefone ou Serviço..."
                 value={termoPesquisa}
                 onChange={(e) => setTermoPesquisa(e.target.value)}
                 className="w-full py-2 pl-10 pr-4 bg-stone-50 border border-stone-200 rounded-lg focus:ring-[#A2672D] focus:border-[#A2672D]"
@@ -198,6 +199,7 @@ export default function AgendamentosAdmin() {
                 <tr className="text-[#A2672D] border-b border-stone-200">
                   <th className="p-3">ID</th>
                   <th className="p-3">Cliente</th>
+                  <th className="p-3">Telefone</th> {/* Coluna Adicionada */}
                   <th className="p-3">Email</th>
                   <th className="p-3">Serviço</th>
                   <th className="p-3 text-center">Data/Hora</th>
@@ -210,14 +212,14 @@ export default function AgendamentosAdmin() {
               <tbody className="text-stone-600">
                 {loading ? (
                   <tr>
-                    <td colSpan="9" className="text-center p-4">
+                    <td colSpan="10" className="text-center p-4">
                       Carregando...
                     </td>
                   </tr>
                 ) : agendamentosFiltrados.length === 0 ? (
                   <tr>
                     <td
-                      colSpan="9"
+                      colSpan="10"
                       className="text-center p-8 text-stone-400 italic font-medium"
                     >
                       Nenhum resultado encontrado
@@ -232,6 +234,9 @@ export default function AgendamentosAdmin() {
                       <td className="p-3 opacity-70">{ag.id}</td>
                       <td className="p-3 font-medium text-stone-800">
                         {ag.nome}
+                      </td>
+                      <td className="p-3 text-stone-700 font-semibold">
+                        {ag.telefone || "---"} {/* Exibição do Telefone */}
                       </td>
                       <td className="p-3">{ag.email}</td>
                       <td className="p-3">{ag.servico_nome}</td>
@@ -314,6 +319,23 @@ export default function AgendamentosAdmin() {
                   {errors.nome?.message}
                 </p>
               </div>
+
+              {/* CAMPO TELEFONE ADICIONADO */}
+              <div>
+                <label className="block text-stone-700 font-medium mb-1">
+                  Telefone
+                </label>
+                <input
+                  type="tel"
+                  placeholder="Ex: 923 000 000"
+                  {...register("telefone")}
+                  className="w-full px-4 py-3 rounded-lg border border-stone-300 focus:ring-2 focus:ring-amber-400 focus:outline-none"
+                />
+                <p className="text-red-500 text-xs mt-1">
+                  {errors.telefone?.message}
+                </p>
+              </div>
+
               <div>
                 <label className="block text-stone-700 font-medium mb-1">
                   Email
@@ -326,6 +348,7 @@ export default function AgendamentosAdmin() {
                   {errors.email?.message}
                 </p>
               </div>
+
               <div>
                 <label className="block text-stone-700 font-medium mb-1">
                   Serviço
