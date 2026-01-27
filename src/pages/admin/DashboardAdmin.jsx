@@ -1,54 +1,41 @@
 import AdminLayout from "./components/AdminLayout";
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { getDashboardStats } from "../../services/dashboardService";
 
 export default function DashboardAdmin() {
+  const [loading, setLoading] = useState(true);
   const [dadosEstatisticos, setDadosEstatisticos] = useState({
     receitaMes: "—",
-    clientesAtendidos: 0,
+    totalEncomendas: 0,
     agendamentosHoje: 0,
     proximoAgendamento: "—",
   });
 
   const [proximosAgendamentos, setProximosAgendamentos] = useState([]);
 
-  // CARREGAMENTO DOS DADOS
   useEffect(() => {
     async function carregarDashboard() {
       try {
+        setLoading(true);
         const data = await getDashboardStats();
 
-        // FILTRAR AGENDAMENTOS DE HOJE
-        const hoje = new Date().toISOString().split("T")[0];
-        const agendamentosHoje = data.agendamentos.filter(
-          (a) => a.data === hoje,
-        );
-
-        // AGENDAMENTOS FUTUROS + PENDENTES ORDENADOS POR HORA
-        const proximos = data.agendamentos
-          .filter((a) => a.status === "pendente")
-          .sort((a, b) => a.hora.localeCompare(b.hora));
-
-        // ATUALIZA DADOS ESTATÍSTICOS
+        // O segredo está aqui: usar EXATAMENTE o que o Service calculou
         setDadosEstatisticos({
-          receitaMes: "—", // pronto para endpoint financeiro futuramente
-          clientesAtendidos: data.counts.clientes,
-          agendamentosHoje: agendamentosHoje.length,
-          proximoAgendamento: proximos.length
-            ? `${proximos[0].hora} (${proximos[0].servico_nome})`
+          receitaMes: "—",
+          totalEncomendas: data.counts.encomendas,
+          agendamentosHoje: data.counts.agendamentosHoje, // Puxando o valor que já é 2 no backend
+          proximoAgendamento: data.proximoAgendamento
+            ? `${data.proximoAgendamento.hora} (${data.proximoAgendamento.servico_nome})`
             : "Nenhum agendamento",
         });
 
-        // ATUALIZA PRÓXIMOS AGENDAMENTOS (top 5)
-        setProximosAgendamentos(
-          proximos.slice(0, 5).map((a) => ({
-            nome: a.nome,
-            servico: a.servico_nome,
-            hora: a.hora,
-          })),
-        );
+        // Agendamentos pendentes ordenados (já vêm do service)
+        setProximosAgendamentos(data.agendamentos.slice(0, 5));
       } catch (error) {
         console.error("Erro ao carregar dashboard:", error);
+      } finally {
+        setLoading(false);
       }
     }
 
@@ -58,96 +45,122 @@ export default function DashboardAdmin() {
   return (
     <>
       <title>Dashboard Mirashell</title>
-
       <AdminLayout title="Painel de Gestão Mirashell">
-        {/* CARDS DE ESTATÍSTICAS */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-          <div className="bg-white border border-stone-200 p-6 rounded-xl shadow-sm flex flex-col hover:shadow-md hover:scale-[1.01] transition-all cursor-pointer">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-8">
+          {/* Card Receita */}
+          <div className="bg-white border border-stone-200 p-6 rounded-xl shadow-sm flex flex-col hover:shadow-md transition-all">
             <div className="flex justify-between items-start">
               <div>
                 <p className="text-stone-500 text-sm font-medium">
                   Receita (Mês)
                 </p>
-                <h3 className="text-2xl sm:text-3xl font-bold mt-1 text-[#A2672D] truncate">
+                <h3 className="text-2xl sm:text-3xl font-bold mt-1 text-[#A2672D]">
                   {dadosEstatisticos.receitaMes}
                 </h3>
               </div>
-              <i className="fas fa-dollar-sign text-3xl sm:text-4xl text-[#A2672D] opacity-40 shrink-0"></i>
+              <i className="fas fa-dollar-sign text-3xl text-[#A2672D] opacity-40"></i>
             </div>
-            <p className="text-xs text-stone-400 mt-2 truncate">
-              <i className="fas fa-info-circle mr-1"></i> Total de Vendas no
-              Período
-            </p>
           </div>
 
-          <div className="bg-white border border-stone-200 p-6 rounded-xl shadow-sm flex flex-col hover:shadow-md hover:scale-[1.01] transition-all cursor-pointer">
+          {/* Card Encomendas */}
+          <Link
+            to="/dashboard/admin/encomendas"
+            className="bg-white border border-stone-200 p-6 rounded-xl shadow-sm flex flex-col hover:shadow-md hover:scale-[1.01] transition-all"
+          >
             <div className="flex justify-between items-start">
               <div>
                 <p className="text-stone-500 text-sm font-medium">
-                  Clientes Atendidos
+                  Total Encomendas
                 </p>
-                <h3 className="text-2xl sm:text-3xl font-bold mt-1 text-stone-800 truncate">
-                  {dadosEstatisticos.clientesAtendidos}
+                <h3 className="text-2xl sm:text-3xl font-bold mt-1 text-stone-800">
+                  {dadosEstatisticos.totalEncomendas}
                 </h3>
               </div>
-              <i className="fas fa-users text-3xl sm:text-4xl text-[#A2672D] opacity-40 shrink-0"></i>
+              <i className="fas fa-box text-3xl text-[#A2672D] opacity-40"></i>
             </div>
-            <p className="text-xs text-stone-400 mt-2 truncate">
-              <i className="fas fa-info-circle mr-1"></i> Quantidade Única no
-              Mês
+            <p className="text-xs text-stone-400 mt-2">
+              Gerir pedidos de produtos
             </p>
-          </div>
+          </Link>
 
-          <div className="bg-white border border-stone-200 p-6 rounded-xl shadow-sm flex flex-col hover:shadow-md hover:scale-[1.01] transition-all cursor-pointer">
+          {/* Card Agendamentos - CORRIGIDO */}
+          <Link
+            to="/dashboard/admin/agendamentos"
+            className="bg-white border border-stone-200 p-6 rounded-xl shadow-sm flex flex-col hover:shadow-md hover:scale-[1.01] transition-all"
+          >
             <div className="flex justify-between items-start">
               <div>
                 <p className="text-stone-500 text-sm font-medium">
                   Agendamentos Hoje
                 </p>
-                <h3 className="text-2xl sm:text-3xl font-bold mt-1 text-stone-800 truncate">
+                <h3 className="text-2xl sm:text-3xl font-bold mt-1 text-stone-800">
                   {dadosEstatisticos.agendamentosHoje}
                 </h3>
               </div>
-              <i className="fas fa-calendar-check text-3xl sm:text-4xl text-[#A2672D] opacity-40 shrink-0"></i>
+              <i className="fas fa-calendar-check text-3xl text-[#A2672D] opacity-40"></i>
             </div>
-            <p className="text-xs text-stone-500 mt-2 truncate font-medium">
+            <p className="text-xs text-stone-500 mt-2 font-medium">
               Próximo:{" "}
               <span className="text-[#A2672D]">
                 {dadosEstatisticos.proximoAgendamento}
               </span>
             </p>
-          </div>
+          </Link>
         </div>
 
-        {/* PRÓXIMOS AGENDAMENTOS */}
+        {/* LISTA LATERAL */}
         <div className="bg-white border border-stone-200 rounded-xl shadow-sm p-4 sm:p-6">
-          <h3 className="text-xl font-bold mb-4 text-[#A2672D]">
-            Próximos Agendamentos
-          </h3>
+          <div className="flex justify-between items-center mb-6">
+            <h3 className="text-xl font-bold text-[#A2672D]">
+              Próximos Agendamentos
+            </h3>
+            <Link
+              to="/dashboard/admin/agendamentos"
+              className="text-sm font-semibold text-[#A2672D] hover:underline"
+            >
+              Ver todos <i className="fas fa-arrow-right ml-1"></i>
+            </Link>
+          </div>
+
           <div className="space-y-3">
-            {proximosAgendamentos.length === 0 ? (
+            {loading ? (
+              <p className="text-center text-stone-400 py-6 italic">
+                Sincronizando dados...
+              </p>
+            ) : proximosAgendamentos.length === 0 ? (
               <div className="text-center text-stone-400 text-sm py-6">
                 <i className="fas fa-calendar-times text-2xl mb-2 block"></i>
-                Não há agendamentos futuros no momento
+                Nenhum agendamento pendente encontrado.
               </div>
             ) : (
-              proximosAgendamentos.map((agendamento, index) => (
-                <div
+              proximosAgendamentos.map((ag, index) => (
+                <Link
                   key={index}
-                  className="flex justify-between items-center p-3 rounded-lg hover:bg-stone-50 transition border-b border-stone-100 last:border-b-0"
+                  to="/dashboard/admin/agendamentos"
+                  className="flex justify-between items-center p-4 rounded-lg hover:bg-stone-50 transition border border-stone-50"
                 >
-                  <div>
-                    <p className="font-semibold text-stone-700 truncate">
-                      {agendamento.nome}
-                    </p>
-                    <p className="text-sm text-stone-500 truncate">
-                      {agendamento.servico}
-                    </p>
+                  <div className="flex items-center gap-4">
+                    <div className="w-10 h-10 rounded-full bg-stone-100 flex items-center justify-center text-[#A2672D]">
+                      <i className="fas fa-user"></i>
+                    </div>
+                    <div className="text-left">
+                      <p className="font-semibold text-stone-800 leading-tight">
+                        {ag.nome}
+                      </p>
+                      <p className="text-sm text-stone-500">
+                        {ag.servico_nome}
+                      </p>
+                    </div>
                   </div>
-                  <span className="text-[#A2672D] font-bold shrink-0">
-                    {agendamento.hora}
-                  </span>
-                </div>
+                  <div className="text-right">
+                    <span className="text-[#A2672D] font-bold block">
+                      {ag.hora}
+                    </span>
+                    <span className="text-[10px] uppercase text-stone-400 font-bold tracking-tighter">
+                      {ag.data}
+                    </span>
+                  </div>
+                </Link>
               ))
             )}
           </div>
