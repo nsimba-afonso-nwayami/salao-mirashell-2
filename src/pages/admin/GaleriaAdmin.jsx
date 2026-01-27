@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { toast } from "react-hot-toast";
+import { Link } from "react-router-dom";
 
 import AdminLayout from "./components/AdminLayout";
 import Modal from "./components/Modal";
@@ -183,12 +184,20 @@ export default function GaleriaAdmin() {
                         {item.title}
                       </td>
                       <td className="p-3 text-center">
-                        <button
-                          onClick={() => handleDelete(item.id)}
-                          className="px-3 py-1 bg-red-100 text-red-700 rounded font-semibold hover:bg-red-200 transition cursor-pointer"
-                        >
-                          Eliminar
-                        </button>
+                        <div className="flex justify-center gap-2">
+                          <Link
+                            to="/#galeria"
+                            className="px-3 py-1 bg-stone-100 text-stone-700 rounded font-semibold hover:bg-stone-200 transition cursor-pointer flex items-center gap-1"
+                          >
+                            Ver
+                          </Link>
+                          <button
+                            onClick={() => handleDelete(item.id)}
+                            className="px-3 py-1 bg-red-100 text-red-700 rounded font-semibold hover:bg-red-200 transition cursor-pointer"
+                          >
+                            Eliminar
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   ))
