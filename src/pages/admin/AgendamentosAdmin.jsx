@@ -7,7 +7,6 @@ import { toast } from "react-hot-toast";
 import {
   listarAgendamentos,
   criarAgendamento,
-  atualizarAgendamento,
   eliminarAgendamento,
   aprovarAgendamento,
   cancelarAgendamento,
@@ -26,8 +25,6 @@ export default function AgendamentosAdmin() {
   const [loading, setLoading] = useState(true);
 
   const [openNovo, setOpenNovo] = useState(false);
-  const [openEditar, setOpenEditar] = useState(false);
-  const [agendamentoSelecionado, setAgendamentoSelecionado] = useState(null);
 
   const [filtroStatus, setFiltroStatus] = useState("");
   const [dataSelecionada, setDataSelecionada] = useState("");
@@ -53,7 +50,6 @@ export default function AgendamentosAdmin() {
         listarProfissionais(),
       ]);
 
-      // Ordenando do último registro ao primeiro (ID decrescente)
       const ordenados = (dataAgend || []).sort((a, b) => b.id - a.id);
 
       setAgendamentos(ordenados);
@@ -80,18 +76,6 @@ export default function AgendamentosAdmin() {
       carregarDados();
     } catch (err) {
       toast.error("Erro ao criar agendamento");
-    }
-  };
-
-  const handleEditar = async (data) => {
-    try {
-      await atualizarAgendamento(agendamentoSelecionado.id, data);
-      toast.success("Agendamento atualizado!");
-      setOpenEditar(false);
-      reset();
-      carregarDados();
-    } catch (err) {
-      toast.error("Erro ao atualizar");
     }
   };
 
@@ -127,12 +111,6 @@ export default function AgendamentosAdmin() {
         toast.error("Erro ao eliminar");
       }
     }
-  };
-
-  const prepararEdicao = (agendamento) => {
-    setAgendamentoSelecionado(agendamento);
-    reset(agendamento);
-    setOpenEditar(true);
   };
 
   // --- FILTROS ---
@@ -280,12 +258,6 @@ export default function AgendamentosAdmin() {
                       </td>
                       <td className="p-3 text-center">
                         <div className="flex justify-center gap-2">
-                          <button
-                            onClick={() => prepararEdicao(ag)}
-                            className="px-3 py-1 bg-amber-100 text-amber-700 rounded font-semibold hover:bg-amber-200 transition cursor-pointer"
-                          >
-                            Editar
-                          </button>
                           {ag.status?.toLowerCase() !== "confirmado" && (
                             <button
                               onClick={() => handleAprovar(ag.id)}
@@ -441,132 +413,6 @@ export default function AgendamentosAdmin() {
                   className="px-6 py-3 bg-[#A2672D] text-white font-semibold rounded-lg cursor-pointer"
                 >
                   Confirmar Agendamento
-                </button>
-              </div>
-            </form>
-          </div>
-        </Modal>
-
-        {/* MODAL EDITAR */}
-        <Modal
-          isOpen={openEditar}
-          onClose={() => setOpenEditar(false)}
-          title="Editar Agendamento"
-          icon="fas fa-edit"
-        >
-          <div className="max-w-3xl mx-auto space-y-6">
-            <form
-              onSubmit={handleSubmit(handleEditar)}
-              className="grid gap-6 md:grid-cols-2"
-            >
-              <div className="md:col-span-2">
-                <label className="block text-stone-700 font-medium mb-1">
-                  Nome do Cliente
-                </label>
-                <input
-                  {...register("nome")}
-                  className="w-full px-4 py-3 rounded-lg border border-stone-300 focus:ring-2 focus:ring-amber-400 focus:outline-none"
-                />
-                <p className="text-red-500 text-xs mt-1">
-                  {errors.nome?.message}
-                </p>
-              </div>
-              <div>
-                <label className="block text-stone-700 font-medium mb-1">
-                  Email
-                </label>
-                <input
-                  {...register("email")}
-                  className="w-full px-4 py-3 rounded-lg border border-stone-300 focus:ring-2 focus:ring-amber-400 focus:outline-none"
-                />
-                <p className="text-red-500 text-xs mt-1">
-                  {errors.email?.message}
-                </p>
-              </div>
-              <div>
-                <label className="block text-stone-700 font-medium mb-1">
-                  Status
-                </label>
-                <select
-                  {...register("status")}
-                  className="w-full px-4 py-3 rounded-lg border border-stone-300 focus:ring-2 focus:ring-amber-400 focus:outline-none"
-                >
-                  <option value="pendente">Pendente</option>
-                  <option value="confirmado">Confirmado</option>
-                  <option value="cancelado">Cancelado</option>
-                </select>
-                <p className="text-red-500 text-xs mt-1">
-                  {errors.status?.message}
-                </p>
-              </div>
-              <div>
-                <label className="block text-stone-700 font-medium mb-1">
-                  Profissional
-                </label>
-                <select
-                  {...register("profissional")}
-                  className="w-full px-4 py-3 rounded-lg border border-stone-300 focus:ring-2 focus:ring-amber-400 focus:outline-none"
-                >
-                  <option value="">Selecione o profissional</option>
-                  {profissionais.map((p) => (
-                    <option key={p.id} value={p.id}>
-                      {p.nome}
-                    </option>
-                  ))}
-                </select>
-                <p className="text-red-500 text-xs mt-1">
-                  {errors.profissional?.message}
-                </p>
-              </div>
-              <div>
-                <label className="block text-stone-700 font-medium mb-1">
-                  Data
-                </label>
-                <input
-                  type="date"
-                  {...register("data")}
-                  className="w-full px-4 py-3 rounded-lg border border-stone-300 focus:ring-2 focus:ring-amber-400 focus:outline-none"
-                />
-                <p className="text-red-500 text-xs mt-1">
-                  {errors.data?.message}
-                </p>
-              </div>
-              <div>
-                <label className="block text-stone-700 font-medium mb-1">
-                  Horário
-                </label>
-                <input
-                  type="time"
-                  {...register("hora")}
-                  className="w-full px-4 py-3 rounded-lg border border-stone-300 focus:ring-2 focus:ring-amber-400 focus:outline-none"
-                />
-                <p className="text-red-500 text-xs mt-1">
-                  {errors.hora?.message}
-                </p>
-              </div>
-              <div className="md:col-span-2">
-                <label className="block text-stone-700 font-medium mb-1">
-                  Observações
-                </label>
-                <textarea
-                  {...register("observacoes")}
-                  rows="3"
-                  className="w-full px-4 py-3 rounded-lg border border-stone-300 focus:ring-2 focus:ring-amber-400 focus:outline-none"
-                />
-              </div>
-              <div className="md:col-span-2 flex justify-end gap-3 mt-4">
-                <button
-                  type="button"
-                  onClick={() => setOpenEditar(false)}
-                  className="px-6 py-3 bg-stone-200 hover:bg-stone-300 text-stone-800 rounded-lg cursor-pointer"
-                >
-                  Cancelar
-                </button>
-                <button
-                  type="submit"
-                  className="px-6 py-3 bg-amber-600 text-white font-semibold rounded-lg cursor-pointer"
-                >
-                  Salvar Alterações
                 </button>
               </div>
             </form>
