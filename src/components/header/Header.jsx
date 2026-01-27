@@ -36,13 +36,10 @@ export default function Header() {
             md:translate-x-0
           `}
         >
+          {/* SEMPRE */}
           <Link to="/" className={linkClasses}>
             Início
           </Link>
-
-          <HashLink smooth to="/#sobre" className={linkClasses}>
-            Sobre
-          </HashLink>
 
           <HashLink smooth to="/#servicos" className={linkClasses}>
             Serviços
@@ -52,24 +49,32 @@ export default function Header() {
             Galeria
           </HashLink>
 
-          <Link to="/agendar" className={linkClasses}>
-            Agendar
-          </Link>
-
           <Link to="/loja" className={linkClasses}>
             Loja
           </Link>
 
-          <HashLink smooth to="/#fale-connosco" className={linkClasses}>
-            Fale Connosco
-          </HashLink>
+          {/* APENAS NÃO LOGADO */}
+          {!isAuthenticated && (
+            <>
+              <HashLink smooth to="/#sobre" className={linkClasses}>
+                Sobre
+              </HashLink>
+
+              <Link to="/agendar" className={linkClasses}>
+                Agendar
+              </Link>
+
+              <HashLink smooth to="/#fale-connosco" className={linkClasses}>
+                Fale Connosco
+              </HashLink>
+            </>
+          )}
         </nav>
 
-        {/* Ações (Login / Dashboard / Logout) */}
+        {/* Ações */}
         <div className="flex items-center gap-5 text-white text-sm font-medium">
           {isAuthenticated ? (
             <>
-              {/* Dashboard */}
               <Link
                 to="/dashboard/admin"
                 className="flex items-center gap-2 hover:text-[#5a4d3e] transition"
@@ -78,10 +83,9 @@ export default function Header() {
                 <span className="hidden sm:inline">Dashboard</span>
               </Link>
 
-              {/* Logout */}
               <button
                 onClick={logout}
-                className="flex items-center gap-2 cursor-pointer hover:text-[#5a4d3e] transition"
+                className="flex items-center gap-2 hover:text-[#5a4d3e] transition"
               >
                 <i className="fas fa-sign-out-alt text-lg"></i>
                 <span className="hidden sm:inline">Sair</span>
@@ -97,7 +101,7 @@ export default function Header() {
             </Link>
           )}
 
-          {/* Menu mobile */}
+          {/* Mobile menu */}
           <button
             className="md:hidden text-2xl ml-2"
             onClick={() => setMenuOpen(!menuOpen)}
