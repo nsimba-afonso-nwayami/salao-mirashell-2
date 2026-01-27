@@ -9,7 +9,6 @@ import Modal from "./components/Modal";
 import {
   listarEncomendas,
   criarEncomenda,
-  atualizarEncomenda,
   eliminarEncomenda,
 } from "../../services/encomendasService";
 import { listarProdutos } from "../../services/produtosService";
@@ -20,14 +19,11 @@ export default function EncomendasAdmin() {
   const [produtos, setProdutos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [openNovo, setOpenNovo] = useState(false);
-  const [openEditar, setOpenEditar] = useState(false);
-  const [encomendaSelecionada, setEncomendaSelecionada] = useState(null);
   const [termoPesquisa, setTermoPesquisa] = useState("");
   const [filtroStatus, setFiltroStatus] = useState("");
 
   const statusOpcoes = ["pendente", "confirmada", "cancelada", "entregue"];
 
-  // FUNÇÃO DE FORMATAÇÃO DE URL (Igual à sua página da Loja)
   const formatImageUrl = (url) => {
     if (!url) return "";
     return url.replace("/media/", "/api/media/");
@@ -52,16 +48,12 @@ export default function EncomendasAdmin() {
     "Namibe",
     "Uíge",
     "Zaire",
-    "Icolo e Bengo",
-    "Cassai Sul",
-    "Moxico Leste",
   ].sort();
 
   const {
     register,
     handleSubmit,
     reset,
-    setValue,
     watch,
     formState: { errors },
   } = useForm({
@@ -133,36 +125,6 @@ export default function EncomendasAdmin() {
     }
   };
 
-  const onSubmitEditar = async (data) => {
-    try {
-      const produtoSel = produtos.find((p) => p.id === Number(data.produto_id));
-      const payload = {
-        nome_cliente: data.nome_cliente,
-        telefone: data.telefone,
-        email: data.email,
-        endereco: data.endereco,
-        cidade: data.cidade,
-        provincia: data.provincia,
-        status: data.status.toLowerCase(),
-        itens: [
-          {
-            produto: Number(produtoSel.id),
-            quantidade: Number(data.quantidade),
-            preco: Number(produtoSel.preco),
-            total: Number(produtoSel.preco) * Number(data.quantidade),
-          },
-        ],
-      };
-
-      await atualizarEncomenda(encomendaSelecionada.id, payload);
-      toast.success("Encomenda atualizada!");
-      setOpenEditar(false);
-      carregarDados();
-    } catch (err) {
-      toast.error("Erro ao atualizar dados.");
-    }
-  };
-
   const handleDelete = async (id) => {
     if (window.confirm(`Tem certeza que deseja eliminar a encomenda ${id}?`)) {
       try {
@@ -173,23 +135,6 @@ export default function EncomendasAdmin() {
         toast.error("Erro ao eliminar");
       }
     }
-  };
-
-  const prepararEdicao = (enc) => {
-    setEncomendaSelecionada(enc);
-    setValue("nome_cliente", enc.nome_cliente);
-    setValue("telefone", enc.telefone);
-    setValue("email", enc.email);
-    setValue("endereco", enc.endereco);
-    setValue("cidade", enc.cidade);
-    setValue("provincia", enc.provincia);
-    setValue("status", enc.status.toLowerCase());
-
-    if (enc.itens && enc.itens.length > 0) {
-      setValue("produto_id", enc.itens[0].produto);
-      setValue("quantidade", enc.itens[0].quantidade);
-    }
-    setOpenEditar(true);
   };
 
   const encomendasFiltradas = encomendas.filter((enc) => {
@@ -347,20 +292,12 @@ export default function EncomendasAdmin() {
                           </span>
                         </td>
                         <td className="p-3 text-center">
-                          <div className="flex justify-center gap-2">
-                            <button
-                              onClick={() => prepararEdicao(enc)}
-                              className="px-3 py-1 bg-amber-100 text-amber-700 rounded font-semibold hover:bg-amber-200 transition cursor-pointer"
-                            >
-                              Editar
-                            </button>
-                            <button
-                              onClick={() => handleDelete(enc.id)}
-                              className="px-3 py-1 bg-red-100 text-red-700 rounded font-semibold hover:bg-red-200 transition cursor-pointer"
-                            >
-                              Eliminar
-                            </button>
-                          </div>
+                          <button
+                            onClick={() => handleDelete(enc.id)}
+                            className="px-3 py-1 bg-red-100 text-red-700 rounded font-semibold hover:bg-red-200 transition cursor-pointer"
+                          >
+                            Eliminar
+                          </button>
                         </td>
                       </tr>
                     );
@@ -372,20 +309,16 @@ export default function EncomendasAdmin() {
         </div>
 
         <Modal
-          isOpen={openNovo || openEditar}
-          onClose={() => {
-            setOpenNovo(false);
-            setOpenEditar(false);
-          }}
-          title={openNovo ? "Nova Encomenda" : "Editar Encomenda"}
-          icon={openNovo ? "fas fa-shipping-fast" : "fas fa-edit"}
+          isOpen={openNovo}
+          onClose={() => setOpenNovo(false)}
+          title="Nova Encomenda"
+          icon="fas fa-shipping-fast"
         >
           <div className="max-w-3xl mx-auto space-y-6">
             <form
-              onSubmit={handleSubmit(openNovo ? onSubmitCriar : onSubmitEditar)}
+              onSubmit={handleSubmit(onSubmitCriar)}
               className="grid gap-4 md:grid-cols-2"
             >
-              {/* ... Seus campos de formulário (nome, telefone, email, etc - igual ao anterior) ... */}
               <div className="md:col-span-2">
                 <label className="block text-stone-700 font-medium mb-1 text-sm">
                   Nome do Cliente
@@ -500,7 +433,6 @@ export default function EncomendasAdmin() {
                   />
                 </div>
 
-                {/* BOX DE RESUMO COM IMAGEM FORMATADA */}
                 <div className="md:col-span-2 bg-stone-50 border-2 border-dashed border-stone-200 p-4 rounded-xl flex justify-between items-center mt-2">
                   <div className="flex items-center gap-3">
                     {produtoSelecionado && (
@@ -530,40 +462,19 @@ export default function EncomendasAdmin() {
                 </div>
               </div>
 
-              {openEditar && (
-                <div className="md:col-span-2 border-t pt-4">
-                  <label className="block text-stone-700 font-medium mb-1 text-sm">
-                    Status
-                  </label>
-                  <select
-                    {...register("status")}
-                    className="w-full px-4 py-2 rounded-lg border border-stone-300 bg-white capitalize outline-none"
-                  >
-                    {statusOpcoes.map((s) => (
-                      <option key={s} value={s}>
-                        {s}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              )}
-
               <div className="md:col-span-2 flex justify-end gap-3 mt-4">
                 <button
                   type="button"
-                  onClick={() => {
-                    setOpenNovo(false);
-                    setOpenEditar(false);
-                  }}
+                  onClick={() => setOpenNovo(false)}
                   className="px-6 py-2 bg-stone-200 text-stone-800 rounded-lg cursor-pointer"
                 >
                   Cancelar
                 </button>
                 <button
                   type="submit"
-                  className={`px-6 py-2 text-white font-semibold rounded-lg cursor-pointer ${openNovo ? "bg-[#A2672D]" : "bg-amber-600"}`}
+                  className="px-6 py-2 text-white font-semibold rounded-lg cursor-pointer bg-[#A2672D]"
                 >
-                  {openNovo ? "Criar Encomenda" : "Salvar Alterações"}
+                  Criar Encomenda
                 </button>
               </div>
             </form>
