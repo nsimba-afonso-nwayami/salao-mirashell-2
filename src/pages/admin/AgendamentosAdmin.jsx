@@ -9,6 +9,8 @@ import {
   criarAgendamento,
   atualizarAgendamento,
   eliminarAgendamento,
+  aprovarAgendamento,
+  cancelarAgendamento,
 } from "../../services/agendamentosService";
 import { listarServicos } from "../../services/servicosService";
 import { listarProfissionais } from "../../services/profissionaisService";
@@ -35,7 +37,6 @@ export default function AgendamentosAdmin() {
     register,
     handleSubmit,
     reset,
-    setValue,
     formState: { errors },
   } = useForm({
     resolver: yupResolver(agendamentosSchema),
@@ -51,9 +52,13 @@ export default function AgendamentosAdmin() {
         listarServicos(),
         listarProfissionais(),
       ]);
-      setAgendamentos(dataAgend);
-      setServicos(dataServ);
-      setProfissionais(dataProf);
+
+      // Ordenando do último registro ao primeiro (ID decrescente)
+      const ordenados = (dataAgend || []).sort((a, b) => b.id - a.id);
+
+      setAgendamentos(ordenados);
+      setServicos(dataServ || []);
+      setProfissionais(dataProf || []);
     } catch (error) {
       toast.error("Erro ao carregar dados da API");
     } finally {
@@ -65,7 +70,7 @@ export default function AgendamentosAdmin() {
     carregarDados();
   }, []);
 
-  // --- AÇÕES DO CRUD ---
+  // --- AÇÕES DO CRUD E STATUS ---
   const handleCriar = async (data) => {
     try {
       await criarAgendamento(data);
@@ -83,9 +88,30 @@ export default function AgendamentosAdmin() {
       await atualizarAgendamento(agendamentoSelecionado.id, data);
       toast.success("Agendamento atualizado!");
       setOpenEditar(false);
+      reset();
       carregarDados();
     } catch (err) {
       toast.error("Erro ao atualizar");
+    }
+  };
+
+  const handleAprovar = async (id) => {
+    try {
+      await aprovarAgendamento(id);
+      toast.success("Agendamento aprovado!");
+      carregarDados();
+    } catch (err) {
+      toast.error("Erro ao aprovar");
+    }
+  };
+
+  const handleCancelar = async (id) => {
+    try {
+      await cancelarAgendamento(id);
+      toast.success("Agendamento cancelado!");
+      carregarDados();
+    } catch (err) {
+      toast.error("Erro ao cancelar");
     }
   };
 
@@ -105,7 +131,7 @@ export default function AgendamentosAdmin() {
 
   const prepararEdicao = (agendamento) => {
     setAgendamentoSelecionado(agendamento);
-    Object.keys(agendamento).forEach((key) => setValue(key, agendamento[key]));
+    reset(agendamento);
     setOpenEditar(true);
   };
 
@@ -117,7 +143,7 @@ export default function AgendamentosAdmin() {
       ag.servico_nome?.toLowerCase().includes(termoPesquisa.toLowerCase());
     const statusMatch =
       filtroStatus === "" ||
-      ag.status.toLowerCase() === filtroStatus.toLowerCase();
+      ag.status?.toLowerCase() === filtroStatus.toLowerCase();
     const dataMatch = dataSelecionada === "" || ag.data === dataSelecionada;
     return buscaMatch && statusMatch && dataMatch;
   });
@@ -146,7 +172,7 @@ export default function AgendamentosAdmin() {
             </h3>
             <button
               onClick={() => {
-                reset();
+                reset({ status: "pendente" });
                 setOpenNovo(true);
               }}
               className="flex items-center gap-2 px-4 py-2 bg-[#A2672D] text-white font-semibold rounded-lg hover:opacity-90 transition-all shadow-md cursor-pointer"
@@ -260,6 +286,22 @@ export default function AgendamentosAdmin() {
                           >
                             Editar
                           </button>
+                          {ag.status?.toLowerCase() !== "confirmado" && (
+                            <button
+                              onClick={() => handleAprovar(ag.id)}
+                              className="px-3 py-1 bg-green-100 text-green-700 rounded font-semibold hover:bg-green-200 transition cursor-pointer"
+                            >
+                              Confirmar
+                            </button>
+                          )}
+                          {ag.status?.toLowerCase() !== "cancelado" && (
+                            <button
+                              onClick={() => handleCancelar(ag.id)}
+                              className="px-3 py-1 bg-red-50 text-red-600 rounded font-semibold hover:bg-red-100 transition cursor-pointer"
+                            >
+                              Cancelar
+                            </button>
+                          )}
                           <button
                             onClick={() => handleDelete(ag.id)}
                             className="px-3 py-1 bg-red-100 text-red-700 rounded font-semibold hover:bg-red-200 transition cursor-pointer"
