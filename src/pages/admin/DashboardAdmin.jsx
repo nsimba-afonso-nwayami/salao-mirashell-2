@@ -169,7 +169,7 @@ export default function DashboardAdmin() {
 
           {/* Profissionais */}
           <Link
-            to="/dashboard/admin/profissionais"
+            to="/dashboard/admin/equipe"
             className="bg-white border border-stone-200 p-6 rounded-xl shadow-sm flex flex-col hover:shadow-md hover:scale-[1.01] transition-all"
           >
             <div className="flex justify-between items-start">
