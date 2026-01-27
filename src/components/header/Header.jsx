@@ -36,7 +36,7 @@ export default function Header() {
             md:translate-x-0
           `}
         >
-          {/* SEMPRE */}
+          {/* SEMPRE VISÍVEIS */}
           <Link to="/" className={linkClasses}>
             Início
           </Link>
@@ -53,7 +53,7 @@ export default function Header() {
             Loja
           </Link>
 
-          {/* APENAS NÃO LOGADO */}
+          {/* APENAS QUANDO NÃO ESTÁ LOGADO */}
           {!isAuthenticated && (
             <>
               <HashLink smooth to="/#sobre" className={linkClasses}>
@@ -71,7 +71,7 @@ export default function Header() {
           )}
         </nav>
 
-        {/* Ações */}
+        {/* Ações (Login / Dashboard / Logout) */}
         <div className="flex items-center gap-5 text-white text-sm font-medium">
           {isAuthenticated ? (
             <>
@@ -85,7 +85,7 @@ export default function Header() {
 
               <button
                 onClick={logout}
-                className="flex items-center gap-2 hover:text-[#5a4d3e] transition"
+                className="flex items-center gap-2 cursor-pointer hover:text-[#5a4d3e] transition"
               >
                 <i className="fas fa-sign-out-alt text-lg"></i>
                 <span className="hidden sm:inline">Sair</span>
@@ -101,7 +101,7 @@ export default function Header() {
             </Link>
           )}
 
-          {/* Mobile menu */}
+          {/* Menu mobile */}
           <button
             className="md:hidden text-2xl ml-2"
             onClick={() => setMenuOpen(!menuOpen)}
