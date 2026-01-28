@@ -50,31 +50,33 @@ export default function FaturasAdmin() {
 
   useEffect(() => {
     const verificarFaturaAutomatica = async () => {
-      if (location.state?.criarFaturaAutomatica) {
-        const dados = location.state.criarFaturaAutomatica;
-
-        try {
-          toast.loading("Gerando fatura automática...");
-          await criarFatura(dados);
-          toast.dismiss();
-          toast.success("Fatura gerada e registada com sucesso!");
-
-          // Limpa o estado da navegação para não criar de novo se der F5
-          navigate(location.pathname, { replace: true, state: {} });
-
-          // Recarrega a lista para mostrar a nova fatura
-          carregarDados();
-        } catch (error) {
-          toast.dismiss();
-          toast.error("Erro ao gerar fatura automática");
-        }
-      } else {
+      // Se não houver dados no state ou se já processamos, saímos
+      if (!location.state?.criarFaturaAutomatica) {
         carregarDados();
+        return;
+      }
+
+      const dados = location.state.criarFaturaAutomatica;
+
+      try {
+        // IMPORTANTE: Limpamos o estado IMEDIATAMENTE antes do await
+        // para que um re-render não dispare a função de novo
+        navigate(location.pathname, { replace: true, state: {} });
+
+        toast.loading("Gerando fatura automática...");
+        await criarFatura(dados);
+        toast.dismiss();
+        toast.success("Fatura gerada e registada com sucesso!");
+
+        carregarDados();
+      } catch (error) {
+        toast.dismiss();
+        toast.error("Erro ao gerar fatura automática");
       }
     };
 
     verificarFaturaAutomatica();
-  }, [location.state]);
+  }, [location.state]); // Ele observa o state da rota
 
   // --- AÇÕES ---
   const handleBaixarPDF = (id) => {
@@ -84,10 +86,17 @@ export default function FaturasAdmin() {
     const doc = new jsPDF();
     const dataEmissao = new Date().toLocaleDateString("pt-PT");
 
+    // Lógica para definir a referência única
+    let referenciaTexto = "Avulsa";
+    if (fatura.encomenda) referenciaTexto = `Encomenda #${fatura.encomenda}`;
+    else if (fatura.agendamento)
+      referenciaTexto = `Agendamento #${fatura.agendamento}`;
+    else if (fatura.pedido) referenciaTexto = `Pedido #${fatura.pedido}`;
+
     // --- CABEÇALHO ---
     doc.setFontSize(20);
     doc.setTextColor("#A2672D");
-    doc.text("MIRASHELL - DASHBOARD", 15, 20);
+    doc.text("MIRASHELL FATURA - DASHBOARD", 15, 20);
 
     doc.setFontSize(10);
     doc.setTextColor("#666666");
@@ -100,19 +109,10 @@ export default function FaturasAdmin() {
     const linhas = [
       ["Tipo de Serviço/Venda", fatura.tipo || "Não especificado"],
       ["Método de Pagamento", fatura.metodo_pagamento || "---"],
-      [
-        "Referência (Encomenda)",
-        fatura.encomenda ? `#${fatura.encomenda}` : "N/A",
-      ],
-      [
-        "Referência (Agendamento)",
-        fatura.agendamento ? `#${fatura.agendamento}` : "N/A",
-      ],
-      ["Referência (Pedido)", fatura.pedido ? `#${fatura.pedido}` : "N/A"],
+      ["Referência", referenciaTexto],
       ["Observações", fatura.observacoes || "Sem observações"],
     ];
 
-    // AQUI ESTÁ A MUDANÇA: Chamada direta da função autoTable
     autoTable(doc, {
       startY: 45,
       head: [colunas],
@@ -123,7 +123,6 @@ export default function FaturasAdmin() {
     });
 
     // --- TOTAL ---
-    // Acessamos as informações da última tabela gerada
     const finalY = doc.lastAutoTable.finalY + 10;
     doc.setFontSize(14);
     doc.setTextColor("#000000");
@@ -140,7 +139,6 @@ export default function FaturasAdmin() {
       doc.internal.pageSize.height - 10,
     );
 
-    // Gerar o ficheiro
     doc.save(`Fatura_Mirashell_${fatura.id}.pdf`);
     toast.success("PDF gerado com sucesso!");
   };
