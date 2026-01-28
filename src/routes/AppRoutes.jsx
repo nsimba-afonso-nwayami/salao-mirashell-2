@@ -20,6 +20,7 @@ import ForgotPassword from "../pages/auth/ForgotPassword";
 //Admin
 import DashboardAdmin from "../pages/admin/DashboardAdmin";
 import AgendamentosAdmin from "../pages/admin/AgendamentosAdmin";
+import FaturasAdmin from "../pages/admin/FaturasAdmin";
 import ServicosAdmin from "../pages/admin/ServicosAdmin";
 import CategoriasAdmin from "../pages/admin/CategoriasAdmin";
 import ProdutosAdmin from "../pages/admin/ProdutosAdmin";
@@ -53,6 +54,7 @@ export default function AppRoutes() {
         <Route path="/dashboard/admin">
           <Route index element={<DashboardAdmin />} />
           <Route path="agendamentos" element={<AgendamentosAdmin />} />
+          <Route path="faturas" element={<FaturasAdmin />} />
           <Route path="servicos" element={<ServicosAdmin />} />
           <Route path="categorias" element={<CategoriasAdmin />} />
           <Route path="produtos" element={<ProdutosAdmin />} />
