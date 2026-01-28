@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import { toast } from "react-hot-toast";
 import AdminLayout from "./components/AdminLayout";
 import { useLocation, useNavigate } from "react-router-dom";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
 import {
   listarFaturas,
   eliminarFatura,
@@ -76,7 +78,71 @@ export default function FaturasAdmin() {
 
   // --- AÇÕES ---
   const handleBaixarPDF = (id) => {
-    toast.success(`Gerando PDF da fatura ${id}...`);
+    const fatura = faturas.find((f) => f.id === id);
+    if (!fatura) return toast.error("Fatura não encontrada");
+
+    const doc = new jsPDF();
+    const dataEmissao = new Date().toLocaleDateString("pt-PT");
+
+    // --- CABEÇALHO ---
+    doc.setFontSize(20);
+    doc.setTextColor("#A2672D");
+    doc.text("MIRASHELL - DASHBOARD", 15, 20);
+
+    doc.setFontSize(10);
+    doc.setTextColor("#666666");
+    doc.text(`Fatura Nº: #00${fatura.id}`, 15, 28);
+    doc.text(`Data de Emissão: ${dataEmissao}`, 15, 33);
+    doc.text(`Estado: ${fatura.pago ? "PAGO" : "PENDENTE"}`, 15, 38);
+
+    // --- TABELA DE DETALHES ---
+    const colunas = ["Campo", "Descrição"];
+    const linhas = [
+      ["Tipo de Serviço/Venda", fatura.tipo || "Não especificado"],
+      ["Método de Pagamento", fatura.metodo_pagamento || "---"],
+      [
+        "Referência (Encomenda)",
+        fatura.encomenda ? `#${fatura.encomenda}` : "N/A",
+      ],
+      [
+        "Referência (Agendamento)",
+        fatura.agendamento ? `#${fatura.agendamento}` : "N/A",
+      ],
+      ["Referência (Pedido)", fatura.pedido ? `#${fatura.pedido}` : "N/A"],
+      ["Observações", fatura.observacoes || "Sem observações"],
+    ];
+
+    // AQUI ESTÁ A MUDANÇA: Chamada direta da função autoTable
+    autoTable(doc, {
+      startY: 45,
+      head: [colunas],
+      body: linhas,
+      theme: "striped",
+      headStyles: { fillColor: [162, 103, 45] },
+      styles: { fontSize: 10, cellPadding: 5 },
+    });
+
+    // --- TOTAL ---
+    // Acessamos as informações da última tabela gerada
+    const finalY = doc.lastAutoTable.finalY + 10;
+    doc.setFontSize(14);
+    doc.setTextColor("#000000");
+    doc.setFont("helvetica", "bold");
+    doc.text(`TOTAL: ${Number(fatura.valor).toLocaleString()} Kz`, 15, finalY);
+
+    // --- RODAPÉ ---
+    doc.setFontSize(8);
+    doc.setFont("helvetica", "italic");
+    doc.setTextColor("#999999");
+    doc.text(
+      "Este documento serve como comprovativo de faturação oficial da Mirashell.",
+      15,
+      doc.internal.pageSize.height - 10,
+    );
+
+    // Gerar o ficheiro
+    doc.save(`Fatura_Mirashell_${fatura.id}.pdf`);
+    toast.success("PDF gerado com sucesso!");
   };
 
   const handleDelete = async (id) => {
