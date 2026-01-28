@@ -119,23 +119,28 @@ export default function EncomendasAdmin() {
   // Função simplificada usando o endpoint PATCH atualizar-status
   const handleMudarStatus = async (id, novoStatus) => {
     try {
+      // 1. Atualiza o status na API
       await atualizarStatusEncomenda(id, novoStatus);
       toast.success(`Status alterado para ${novoStatus}`);
 
-      // Se for confirmada, prepara os dados e redireciona
+      // 2. Se for confirmada, prepara os dados e redireciona
       if (novoStatus === "confirmada") {
         const enc = encomendas.find((e) => e.id === id);
+
+        if (!enc) return;
+
         const dadosParaFatura = {
-          tipo: "produto", // Encomenda é geralmente venda de produto
-          metodo_pagamento: "transferencia", // Valor padrão ou vindo da enc
+          tipo: "produto",
+          metodo_pagamento: "transferencia",
           valor: enc.valor_total,
-          pago: true,
+          pago: false, // Alterado para FALSE conforme pedido
           encomenda: enc.id,
           observacoes: `Fatura gerada automaticamente da encomenda #${enc.id}`,
         };
 
-        // Redireciona passando os dados no estado da rota
+        // O uso de replace: true ajuda a evitar que o usuário volte e re-submeta a criação
         navigate("/dashboard/admin/faturas", {
+          replace: true,
           state: { criarFaturaAutomatica: dadosParaFatura },
         });
       } else {
