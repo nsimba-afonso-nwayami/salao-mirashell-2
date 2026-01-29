@@ -131,7 +131,7 @@ export default function EncomendasAdmin() {
 
         const dadosParaFatura = {
           tipo: "produto",
-          metodo_pagamento: "transferencia",
+          metodo_pagamento: "dinheiro",
           valor: enc.valor_total,
           pago: false, // Alterado para FALSE conforme pedido
           encomenda: enc.id,
