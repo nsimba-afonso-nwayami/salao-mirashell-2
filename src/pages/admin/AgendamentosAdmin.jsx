@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { toast } from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 
 // Importações dos seus serviços e validações
 import {
@@ -19,6 +20,8 @@ import AdminLayout from "./components/AdminLayout";
 import Modal from "./components/Modal";
 
 export default function AgendamentosAdmin() {
+  const navigate = useNavigate();
+
   const [agendamentos, setAgendamentos] = useState([]);
   const [servicos, setServicos] = useState([]);
   const [profissionais, setProfissionais] = useState([]);
@@ -81,11 +84,37 @@ export default function AgendamentosAdmin() {
 
   const handleAprovar = async (id) => {
     try {
+      // 1. Atualiza o status na API de agendamentos
       await aprovarAgendamento(id);
       toast.success("Agendamento aprovado!");
-      carregarDados();
+
+      // 2. Localiza o agendamento atualizado
+      const ag = agendamentos.find((item) => item.id === id);
+
+      if (ag) {
+        // Buscamos o serviço para garantir que temos o preço atualizado
+        const servicoInfo = servicos.find((s) => s.id === Number(ag.servico));
+
+        const dadosParaFatura = {
+          tipo: "servico",
+          metodo_pagamento: "dinheiro",
+          valor: Number(servicoInfo?.preco || 0), // Garante que é número
+          pago: false,
+          agendamento: Number(ag.id), // Garante que é número
+          observacoes: `Fatura automatica: Agendamento #${ag.id} - ${ag.servico_nome || "Servico"}`,
+        };
+
+        // 3. Redireciona limpando o histórico para evitar duplicidade
+        navigate("/dashboard/admin/faturas", {
+          replace: true,
+          state: { criarFaturaAutomatica: dadosParaFatura },
+        });
+      } else {
+        carregarDados();
+      }
     } catch (err) {
-      toast.error("Erro ao aprovar");
+      console.error("Erro ao aprovar:", err);
+      toast.error("Erro ao aprovar agendamento");
     }
   };
 
@@ -199,7 +228,7 @@ export default function AgendamentosAdmin() {
                 <tr className="text-[#A2672D] border-b border-stone-200">
                   <th className="p-3">ID</th>
                   <th className="p-3">Cliente</th>
-                  <th className="p-3">Telefone</th> {/* Coluna Adicionada */}
+                  <th className="p-3">Telefone</th>
                   <th className="p-3">Email</th>
                   <th className="p-3">Serviço</th>
                   <th className="p-3 text-center">Data/Hora</th>
