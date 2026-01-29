@@ -24,6 +24,19 @@ export const criarFatura = async (dados) => {
 };
 
 /**
+ * Atualiza uma fatura específica
+ */
+export const atualizarFatura = async (id, dados) => {
+  try {
+    const response = await api.patch(`faturacao/${id}/`, dados);
+    return response.data;
+  } catch (error) {
+    console.error(`Erro ao atualizar fatura ${id}:`, error);
+    throw error;
+  }
+};
+
+/**
  * Obtém os detalhes de uma fatura específica
  */
 export const obterFatura = async (id) => {
