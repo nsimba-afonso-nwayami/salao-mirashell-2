@@ -1,15 +1,20 @@
 import { useState, useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
 import { toast } from "react-hot-toast";
 import AdminLayout from "./components/AdminLayout";
+import Modal from "./components/Modal";
 import { useLocation, useNavigate } from "react-router-dom";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
+import { faturasSchema } from "../../validations/faturasSchema";
 import {
   listarFaturas,
   eliminarFatura,
   obterTotalFaturacao,
   obterFaturacaoMensal,
   criarFatura,
+  atualizarFatura,
 } from "../../services/faturasService";
 
 export default function FaturasAdmin() {
@@ -17,13 +22,25 @@ export default function FaturasAdmin() {
   const [resumo, setResumo] = useState({ total: 0, mensal: 0 });
   const [loading, setLoading] = useState(true);
 
+  const [openEditar, setOpenEditar] = useState(false);
+  const [faturaSelecionada, setFaturaSelecionada] = useState(null);
+
   const [termoPesquisa, setTermoPesquisa] = useState("");
   const [filtroMetodo, setFiltroMetodo] = useState("");
 
   const location = useLocation();
   const navigate = useNavigate();
 
-  const metodosPagamento = ["dinheiro", "transferencia", "multicaixa"];
+  const metodosPagamento = ["dinheiro", "transferencia", "cartao"];
+
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    formState: { errors },
+  } = useForm({
+    resolver: yupResolver(faturasSchema),
+  });
 
   // --- CARREGAMENTO DE DADOS ---
   const carregarDados = async () => {
@@ -79,6 +96,24 @@ export default function FaturasAdmin() {
   }, [location.state]); // Ele observa o state da rota
 
   // --- AÇÕES ---
+  const prepararEdicao = (fatura) => {
+    setFaturaSelecionada(fatura);
+    setValue("metodo_pagamento", fatura.metodo_pagamento);
+    setValue("pago", fatura.pago);
+    setOpenEditar(true);
+  };
+
+  const onSubmitEditar = async (data) => {
+    try {
+      await atualizarFatura(faturaSelecionada.id, data);
+      toast.success("Fatura atualizada com sucesso!");
+      setOpenEditar(false);
+      carregarDados();
+    } catch (err) {
+      toast.error("Erro ao atualizar fatura");
+    }
+  };
+
   const handleBaixarPDF = (id) => {
     const fatura = faturas.find((f) => f.id === id);
     if (!fatura) return toast.error("Fatura não encontrada");
@@ -311,6 +346,12 @@ export default function FaturasAdmin() {
                       <td className="p-3 text-center">
                         <div className="flex justify-center gap-2">
                           <button
+                            onClick={() => prepararEdicao(fat)}
+                            className="px-3 py-1 bg-amber-100 text-amber-700 rounded hover:bg-amber-200 transition cursor-pointer"
+                          >
+                            Atualizar
+                          </button>
+                          <button
                             onClick={() => handleBaixarPDF(fat.id)}
                             className="px-3 py-1 bg-stone-100 text-stone-700 rounded font-semibold hover:bg-stone-200 transition cursor-pointer"
                           >
@@ -331,6 +372,77 @@ export default function FaturasAdmin() {
             </table>
           </div>
         </div>
+
+        {/* MODAL EDITAR FATURA */}
+        <Modal
+          isOpen={openEditar}
+          onClose={() => setOpenEditar(false)}
+          title={`Atualizar Fatura #${faturaSelecionada?.id}`}
+          icon="fas fa-file-invoice-dollar"
+        >
+          <div className="max-w-3xl mx-auto space-y-6">
+            <form
+              onSubmit={handleSubmit(onSubmitEditar)}
+              className="grid gap-6"
+            >
+              {/* Campo: Método de Pagamento */}
+              <div>
+                <label className="block text-stone-700 font-medium mb-1">
+                  Método de Pagamento
+                </label>
+                <select
+                  {...register("metodo_pagamento")}
+                  className="w-full px-4 py-3 rounded-lg border border-stone-300 focus:ring-2 focus:ring-[#A2672D] focus:outline-none capitalize bg-white"
+                >
+                  <option value="">Selecione o método</option>
+                  {metodosPagamento.map((m) => (
+                    <option key={m} value={m}>
+                      {m}
+                    </option>
+                  ))}
+                </select>
+                {errors.metodo_pagamento && (
+                  <p className="text-red-500 text-xs mt-1">
+                    {errors.metodo_pagamento.message}
+                  </p>
+                )}
+              </div>
+
+              {/* Campo: Status de Pagamento (Checkbox Estilizado) */}
+              <div className="flex items-center gap-3 p-4 bg-stone-50 rounded-lg border border-stone-200">
+                <input
+                  type="checkbox"
+                  id="pago"
+                  {...register("pago")}
+                  className="w-5 h-5 accent-[#A2672D] cursor-pointer"
+                />
+                <label
+                  htmlFor="pago"
+                  className="text-stone-700 font-medium cursor-pointer select-none"
+                >
+                  Marcar fatura como paga
+                </label>
+              </div>
+
+              {/* Botões de Ação */}
+              <div className="flex justify-end gap-3 mt-4 border-t border-stone-100 pt-6">
+                <button
+                  type="button"
+                  onClick={() => setOpenEditar(false)}
+                  className="px-6 py-3 cursor-pointer bg-stone-200 text-stone-800 rounded-lg hover:bg-stone-300 transition-colors"
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="submit"
+                  className="px-6 py-3 cursor-pointer bg-[#A2672D] text-white font-semibold rounded-lg hover:opacity-90 transition-all shadow-md"
+                >
+                  Salvar Alterações
+                </button>
+              </div>
+            </form>
+          </div>
+        </Modal>
       </AdminLayout>
     </>
   );
