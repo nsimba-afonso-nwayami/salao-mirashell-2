@@ -8,6 +8,7 @@ export default function Agendar() {
   const [formData, setFormData] = useState({
     nome: "",
     email: "",
+    telefone: "", // Adicionado
     servico: "",
     data: "",
     hora: "",
@@ -40,7 +41,7 @@ export default function Agendar() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const required = ["nome", "servico", "data", "hora"];
+    const required = ["nome", "telefone", "servico", "data", "hora"]; // Telefone adicionado como obrigatório
     const missing = required.filter((field) => !formData[field]);
     if (missing.length > 0) {
       toast.error("Preencha os seguintes campos: " + missing.join(", "));
@@ -50,6 +51,7 @@ export default function Agendar() {
     const payload = {
       nome: formData.nome,
       email: formData.email || "",
+      telefone: formData.telefone, // Adicionado ao payload
       profissional: formData.profissional || null,
       servico: parseInt(formData.servico),
       data: formData.data,
@@ -60,17 +62,23 @@ export default function Agendar() {
     const loadingToast = toast.loading("Enviando agendamento...");
 
     try {
-      const response = await fetch("https://api2.nwayami.com/api/agendamentos/", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
+      const response = await fetch(
+        "https://api2.nwayami.com/api/agendamentos/",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        },
+      );
 
       if (response.ok) {
-        toast.success("Agendamento realizado com sucesso!", { id: loadingToast });
+        toast.success("Agendamento realizado com sucesso!", {
+          id: loadingToast,
+        });
         setFormData({
           nome: "",
           email: "",
+          telefone: "", // Resetar campo
           servico: "",
           data: "",
           hora: "",
@@ -126,6 +134,17 @@ export default function Agendar() {
                 name="email"
                 placeholder="exemplo@gmail.com"
                 value={formData.email}
+                onChange={handleChange}
+                className="w-full px-3 py-3 text-black text-lg border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#A2672D] bg-white"
+              />
+
+              {/* Novo Campo de Telefone */}
+              <input
+                type="tel"
+                name="telefone"
+                placeholder="Seu telefone"
+                required
+                value={formData.telefone}
                 onChange={handleChange}
                 className="w-full px-3 py-3 text-black text-lg border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#A2672D] bg-white"
               />
