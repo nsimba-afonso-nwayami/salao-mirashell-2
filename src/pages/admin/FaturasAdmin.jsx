@@ -52,13 +52,18 @@ export default function FaturasAdmin() {
         obterFaturacaoMensal(),
       ]);
 
-      // Ordenar por ID decrescente (mais recentes primeiro)
+      // Ordenar por ID decrescente
       setFaturas((dataFaturas || []).sort((a, b) => b.id - a.id));
+
+      // MAPEAMENTO CORRETO:
       setResumo({
-        total: dataTotal?.total || 0,
-        mensal: dataMensal?.total_mes || 0,
+        // A API envia 'total_arrecadado' para o total geral
+        total: dataTotal?.total_arrecadado || 0,
+        // A API envia 'total' dentro do objeto de mensalidade
+        mensal: dataMensal?.total || 0,
       });
     } catch (error) {
+      console.error("Erro na API:", error);
       toast.error("Erro ao carregar dados da API");
     } finally {
       setLoading(false);
